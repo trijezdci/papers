@@ -119,7 +119,17 @@
 % A  b  s  t  r  a  c  t
 % *****************************************************************************
 \begin{abstract}
-The classical Modula-2 language was specified in \cite{Wirth78} by Niklaus Wirth at ETH Zurich in 1978. The last revision \cite{Wirth88} was published in 1988. Many computer science books of that era have used Modula-2 for their programming examples. Many of these are still valuable educational resources in computer science education today. In order to compile and run the examples therein, it is essential to have compilers available that follow the classical Modula-2 language definition and run on modern computer hardware and operating systems. While most Modula-2 compilers of that era have disappeared, a few of them have since been re-released under open source licenses. Although the original authors have long ceased work on these compilers, new maintainers have stepped in. This paper gives recommendations for maintenance work on such compilers in a manner that balances the aim to modernise with the need to retain the capability of compiling historic programming examples in the literature with minimal effort.
+The classical Modula-2 language was specified in \cite{Wirth78} by Niklaus Wirth at ETH Zurich in 1978.
+The last revision \cite{Wirth88} was published in 1988. Many computer science books of that era have
+used Modula-2 for their programming examples. Many of these are still valuable educational resources
+in computer science education today. In order to compile and run the examples therein, it is essential
+to have compilers available that follow the classical Modula-2 language definition and run on modern
+computer hardware and operating systems. While most Modula-2 compilers of that era have disappeared,
+a few of them have since been re-released under open source licenses. Although the original authors
+have long ceased work on these compilers, new maintainers have stepped in. This paper gives
+recommendations for maintenance work on such compilers in a manner that balances the aim to
+modernise with the need to retain the capability of compiling historic programming examples in the
+literature with minimal effort.
 \end{abstract}
 
 % \noindent\rule{\textwidth}{2pt}
@@ -515,7 +525,7 @@ Unfortunately, not all unsafe facilities are provided through pseudo-module \ver
 In an ideal world, the type cast syntax would be replaced with a \verb|CAST()| function provided by \verb|SYSTEM| as in ISO Modula-2 \cite{ISO96}, and variant records with type safe extensible records as in Oberon \cite{Wirth90}. However, this would constitute a substantial language revision and as such go beyond the scope of the maintenance aspect of this paper. It would also run counter to the objective to allow the compilation of programming examples in the literature with minimal effort.
 
 
-% *****************************************************************************
+% ***************************On-the-Maintenance-of-Classic-Modula-2-Compilers**************************************************
 % L  a  n  g  u  a  g  e     E  x  t  e  n  s  i  o  n  s
 % *****************************************************************************
 \section{Language Extensions}
