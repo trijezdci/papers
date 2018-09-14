@@ -26,6 +26,8 @@
 %%% PACKAGES
 \usepackage{enumitem} % for better formatting in item lists
 \usepackage{booktabs} % for much better looking tables
+\usepackage{listings} % for better formatting of source code
+\usepackage{xcolor} % for grey comments within source code
 %\usepackage{array} % for better arrays (eg matrices) in maths
 %\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
 %\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
@@ -37,7 +39,7 @@
 \makeatletter
 \newcommand{\verbatimfont}[1]{\def\verbatim@font{#1}}
 \makeatother
-
+\usepackage{courier}
 
 %%% HEADERS & FOOTERS
 \usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
@@ -64,6 +66,19 @@
 %\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
 
 \renewcommand{\emph}[1]{\textbf{\textit{#1}}}
+
+\lstdefinestyle{modula2}{
+  language=Modula-2,
+  frame=none,
+  basicstyle=\fontfamily{pcr}\selectfont,
+  keywordstyle=\textbf,
+  commentstyle=\italicgray
+}
+
+\newcommand\boldgray[1]{\textcolor{gray}{\textbf{#1}}}
+\newcommand\italicgray[1]{\textcolor{gray}{\textit{#1}}}
+\newcommand\middledots{\textperiodcentered\textperiodcentered\textperiodcentered}
+
 
 %%% Glossary
 \usepackage[automake, nonumberlist, style=altlist]{glossaries}
@@ -323,15 +338,16 @@ Inconsistent definition or declaration of multi-dimensional arrays should be \te
 
 \cite{Wirth88} specifies alternative syntax forms to define and declare multi-dimensional array types:
 
-\noindent
-\begin{verbatim}
+\lstset{style=modula2}
+\begin{lstlisting}
 TYPE Matrix = ARRAY [0 .. Cols], [0 .. Rows] OF REAL;
-\end{verbatim}
+\end{lstlisting}
 
 \noindent is an abbreviation of and thus equivalent to 
-\begin{verbatim}
+\lstset{style=modula2}
+\begin{lstlisting}
 TYPE Matrix = ARRAY [0 .. Cols] OF ARRAY [0 .. Rows] OF REAL;
-\end{verbatim}
+\end{lstlisting}
 
 \par\noindent The availability of alternative syntax forms violates SSP and COSP. The more dimensions an array type has, the more preferable the abbreviated form becomes. However, it is more effort to remove or deprecate the long form. The impact of removal or deprecation on existing sources with multi-dimensional arrays would likely be high. It is less effort and sufficient to modify an implementation to detect and warn about mixing both forms in any given compilation unit.
 
@@ -363,18 +379,18 @@ Backwards compatibility can be provided via legacy compiler switch.
 
 \subsubsection{Private-Use Aspect}
 
-The private-use aspect of local modules is lost when they are excised from their host modules and converted into library modules. This aspect is useful when the local module's API is considered unstable and subject to frequent changes without prior notice. However, this can be far more easily implemented by introducing a \gls{non-semantic compiler directive} that specifies a library's intended client modules and causes the compiler to issue warnings whenever such a library is imported by any module other than the intended client modules.
+The private-use aspect of local modules is lost when they are excised from their host modules and converted into library modules. This aspect is useful when the local module's API is considered unstable and subject to frequent changes without prior notice. However, this can be far more easily implemented by introducing a \gls{non-semantic compiler directive} that specifies a library's intended client modules and causes the compiler to issue warnings whenever such a library is imported by any module other than the designated client modules. An example is given below:
 
-\begin{verbatim}
-DEFINITION MODULE PrivateUseLib; (*$CLIENTS=FooLib, BarLib, BazLib*)
-
+\lstset{style=modula2}
+\begin{lstlisting}[escapechar=~]
+DEFINITION MODULE PrivateLib; ~\boldgray{(*\$CLIENTS=FooLib, BarLib, BazLib*)}~
 (* ATTENTION !!! This module is intended for private use only.
  * Its API is subject to frequent change without prior notice.
  * The compiler will issue a warning when it is imported from
- * any other than the intended client modules. *)
-...
-END PrivateUseLib.
-\end{verbatim}
+ * any other than the designated client modules. *)
+ ~\middledots~
+END PrivateLib.
+\end{lstlisting}
 
 
 % *****************************************************************************
@@ -472,7 +488,8 @@ Allowing a client module to write to imported variables violates the principle o
 
 A setter procedure can be defined and exported by the same module if needed.
 
-\begin{verbatim}
+\lstset{style=modula2}
+\begin{lstlisting}
 DEFINITION MODULE Foo;
 
 VAR bar : Bar; (* read-only *)
@@ -480,7 +497,7 @@ VAR bar : Bar; (* read-only *)
 PROCEDURE SetBar ( value : Bar );
 
 END Foo.
-\end{verbatim}
+\end{lstlisting}
 
 \subsubsection{Backwards compatibility}
 
@@ -525,7 +542,7 @@ Unfortunately, not all unsafe facilities are provided through pseudo-module \ver
 In an ideal world, the type cast syntax would be replaced with a \verb|CAST()| function provided by \verb|SYSTEM| as in ISO Modula-2 \cite{ISO96}, and variant records with type safe extensible records as in Oberon \cite{Wirth90}. However, this would constitute a substantial language revision and as such go beyond the scope of the maintenance aspect of this paper. It would also run counter to the objective to allow the compilation of programming examples in the literature with minimal effort.
 
 
-% ***************************On-the-Maintenance-of-Classic-Modula-2-Compilers**************************************************
+% *****************************************************************************
 % L  a  n  g  u  a  g  e     E  x  t  e  n  s  i  o  n  s
 % *****************************************************************************
 \section{Language Extensions}
@@ -544,9 +561,10 @@ Disabling language extensions by default aids and promotes writing of portable s
 
 Under no circumstances should any implementation change the definition of type \verb|SYSTEM.WORD|. However, an implementation targeting an architecture where the smallest addressable storage unit is eight bits wide should provide an alias type \verb|BYTE| in module \verb|SYSTEM| as follows:
 
-\begin{verbatim}
+\lstset{style=modula2}
+\begin{lstlisting}
 TYPE BYTE = WORD;
-\end{verbatim}
+\end{lstlisting}
 
 \subsubsection{Rationale}
 
