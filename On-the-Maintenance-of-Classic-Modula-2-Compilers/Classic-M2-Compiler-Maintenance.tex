@@ -1,0 +1,635 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+\documentclass[10pt,a4paper]{article} % use larger type; default would be 10pt
+
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+\usepackage[top=2.4cm, bottom=2.4cm]{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+% read geometry.pdf for detailed page layout information
+
+%\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{enumitem} % for better formatting in item lists
+\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% FONTS
+\usepackage{lmodern}
+\makeatletter
+\newcommand{\verbatimfont}[1]{\def\verbatim@font{#1}}
+\makeatother
+
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\fancyhf{}
+\lhead{\Title}
+\rhead{\thepage}
+\cfoot{Copyright \textcopyright\hspace{0pt} 2018 B. Kowarsch -- this draft is for peer review only}
+%\cfoot{Copyright \textcopyright\hspace{0pt} 2018 B. Kowarsch -- reproduction permitted for non-commercial use}
+
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+%\usepackage{sectsty}
+%\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+%\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+%\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+%\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+%\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+\renewcommand{\emph}[1]{\textbf{\textit{#1}}}
+
+%%% Glossary
+\usepackage[automake, nonumberlist, style=altlist]{glossaries}
+\makeglossaries
+\newglossaryentry{API}{
+  name=API,
+  description={Application programming interface}
+}
+\newglossaryentry{foreign definition module}{
+  name=foreign definition module,
+  description={A definition module that specifies an interface to a \gls{foreign API}}
+}
+\newglossaryentry{compiler directive}{
+  name=compiler directive,
+  description={A directive within the source to instruct a language processor how to process the input}
+}
+\newglossaryentry{foreign identifier}{
+  name=foreign identifier,
+  description={An identifier of a foreign API}
+}
+\newglossaryentry{foreign API}{
+  name=foreign API,
+  description={An API implemented in a language other than Modula-2}
+}
+\newglossaryentry{non-semantic compiler directive}{
+  name=non-semantic compiler directive,
+  description={A compiler directive that does not alter the semantics of the source code}
+}
+\newglossaryentry{semantic compiler directive}{
+  name=semantic compiler directive,
+  description={A compiler directive that alters the semantics of the source code}
+}
+\usepackage{pifont}
+\renewcommand{\glstextformat}[1]{\textit{#1}}
+
+
+%%% END Article customizations
+
+%%% The "real" document content comes below...
+
+\title{On the Maintenance of Classic Modula-2 Compilers}
+\author{Benjamin Kowarsch}
+\date{September 2018 (Draft 3)}
+\makeatletter
+\let\Title\@title
+\makeatother
+
+\begin{document}
+\verbatimfont{\fontfamily{lmtt}\selectfont}
+\maketitle
+
+% *****************************************************************************
+% A  b  s  t  r  a  c  t
+% *****************************************************************************
+\begin{abstract}
+The classical Modula-2 language was specified in \cite{Wirth78} by Niklaus Wirth at ETH Zurich in 1978. The last revision \cite{Wirth88} was published in 1988. Many computer science books of that era have used Modula-2 for their programming examples. Many of these are still valuable educational resources in computer science education today. In order to compile and run the examples therein, it is essential to have compilers available that follow the classical Modula-2 language definition and run on modern computer hardware and operating systems. While most Modula-2 compilers of that era have disappeared, a few of them have since been re-released under open source licenses. Although the original authors have long ceased work on these compilers, new maintainers have stepped in. This paper gives recommendations for maintenance work on such compilers in a manner that balances the aim to modernise with the need to retain the capability of compiling historic programming examples in the literature with minimal effort.
+\end{abstract}
+
+% \noindent\rule{\textwidth}{2pt}
+
+\section{Methodology}
+
+% *****************************************************************************
+% D  e  s  i  g  n     P  r  i  n  c  i  p  l  e  s
+% *****************************************************************************
+\subsection{Design Principles}
+
+The following design principles strongly informed the recommendations in this paper:
+
+\subsubsection{Single Syntax Principle (SSP)}
+
+There should be one and \textbf{only one} syntax form to express any given concept.
+
+\subsubsection{Literate Syntax Principle (LSP)}
+
+Syntax should be chosen to aid \textbf{readability} and \textbf{comprehensibility} by a human reader.
+
+\subsubsection{Consistency of Syntax Principle (COSP)}
+
+Syntax should be \textbf{consistent}. Analogous concepts should be expressed by analogous syntax.
+
+\subsubsection{Principle of Least Astonishment (POLA)}
+
+Of any number of alternative syntax forms or semantics, the one likely to cause the \textbf{least} astonishment for a human reader should be chosen and the alternatives should be discarded.
+
+\subsubsection{Single Responsibility Principle (SRP)}
+
+Units of decomposition, such as modules and procedures should have a \textbf{single} focus and purpose.
+
+\subsubsection{Principle of Information Hiding (POIH)}
+
+Implementation specific details should always be \textbf{hidden}, public access should be \textbf{denied}.
+
+\subsubsection{Safety Perimeter Principle (SPP)}
+
+Facilities that undermine the safety otherwise safeguarded within the language should be segregated from other facilities. Their use should require explicit intent of the author and be syntactically recognisable to alert author, maintainer and reader of the implications on safety.
+
+
+% *****************************************************************************
+% M  a  i  n  t  e  n  a  n  c  e     O  b  j  e  c  t  i  v  e  s
+% *****************************************************************************
+\subsection{Maintenance Objectives}
+
+The primary objectives for the recommendations in this paper are:
+
+\renewcommand{\labelenumi}{(\arabic{enumi})}
+\begin{enumerate}[itemindent=-0.75em]
+\item to remove facilities that are harmful, outdated or violate design principles
+\item to resolve ambiguities in \cite{Wirth88} and incompatibilities between implementations
+\item to retain capability to compile programming examples in the literature with minimal effort
+\end{enumerate}
+
+\subsubsection{Weighing Objectives by Impact}
+
+\noindent The objectives given above may from case to case be in conflict with one another. Which one should be given preference in the event of a conflict depends on the following factors:
+
+\begin{enumerate}[itemindent=-0.75em]
+\item the severity of the offending facility
+\item the estimated frequency of use of the offending facility
+\item the effort to update sources impacted by change or removal of the offending facility
+\end{enumerate}
+
+\noindent The higher the severity of an offending facility, the stronger is the case for change or removal. Likewise, the lower the estimated frequency of use and the less the effort to update impacted sources, the stronger the case for change or removal. In the event that the estimated frequency of use is high and the effort to update impacted sources is significant, deprecation is recommended.
+
+
+% *****************************************************************************
+% M  i  t  i  g  a  t  i  o  n     M  e  t  h  o  d  s
+% *****************************************************************************
+\subsection{Mitigation Methods}
+
+Mitigation of an offending facility falls into the following categories:
+
+\subsubsection{Warning}
+
+A warning should be issued for each and every use of the offending facility.
+
+\subsubsection{Change}
+
+The offending facility should be replaced with a proposed alternative.
+
+\subsubsection{Deprecation}
+
+A compiler switch to enable and disable the offending facility should be provided and it should be disabled by default. When it is enabled, a deprecation warning should be isued for each and every use of the offending facility.
+
+\subsubsection{Removal}
+
+Support for the offending facility should be removed altogether.\\
+
+\par\noindent From an educational perspective, the availability of offending facilities promotes bad habits. Replacement or removal is therefore generally preferable to warning or deprecation.
+
+
+\section{Lexis}
+
+% *****************************************************************************
+% O  c  t  a  l     L  i  t  e  r  a  l  s
+% *****************************************************************************
+\subsection{Octal Literals}
+
+Support for octal literals should be \textbf{removed}.
+
+\subsubsection{Rationale}
+
+The use of octal numbers has long been outdated. Further, the \verb|B| and \verb|C| suffixes used to denote octal literals are also legal digits within hexadecimal literals, which is confusing to human readers of the source code as it violates POLA and it unnecessarily complicates the lexing of literals.
+
+\subsubsection{Substitute}
+
+The built-in \verb|CHR()| function can be used instead without penalty as it is evaluated at compile time for constant arguments. The function accepts decimal and hexadecimal arguments. Code that uses the \verb|CHR()| function instead of octal literals can always be compiled on any classic Modula-2 compiler, regardless of whether octal literals are recognised or not.
+
+\subsubsection{Backwards compatibility}
+
+Preferably, a filter program should be provided with the compiler to replace all occurrences of octal literals with \verb|CHR()| function calls in existing Modula-2 source files. This can be done on a lexical level and the code of the compiler's lexer could be reused to build such a filter program. Alternatively, octal literals could be deprecated instead.
+
+
+% *****************************************************************************
+% S  y  n  o  n  y  m     S  y  m  b  o  l  s
+% *****************************************************************************
+\subsection{Synonym Symbols}
+
+Support for synonym symbols \verb|<>|, \verb|&| and \verb|~| should be \textbf{removed}.
+
+\subsubsection{Rationale}
+
+Synonym symbols violate SSP and they are are notably \textbf{absent} from the grammar in \cite{Wirth88}.
+
+The inequality operator symbol \verb|#| is preferable to its synonym \verb|<>| because it resembles the mathematical inequality symbol $\neq$ and as a single character symbol it simplifies lexing. Reserved words \verb|AND| and \verb|NOT| are preferable to their respective synonyms \verb|&| and \verb|~| because of consistency: While there are synonyms for \verb|AND| and \verb|NOT|, there is none for \verb|OR|. Although \verb!|! could have been used to denote \verb|OR|, it is already used to separate case labels and would have caused ambiguity.
+
+\subsubsection{Substitute}
+
+Symbol \verb|#| can be used in place of \verb|<>|, while \verb|AND| can be used in place of \verb|&| and \verb|NOT| in place of \verb|~|.
+
+\subsubsection{Backwards compatibility}
+
+Preferably, a filter program should be provided with the compiler to replace all occurences of the removed symbols with their respective counterparts in existing Modula-2 source files. This can be done on a lexical level and the code of the compiler's lexer could be reused to build such a filter program. Alternatively, synonym symbols could be deprecated instead.
+
+
+% *****************************************************************************
+% N  o  n  -  S  e  m  a  n  t  i  c     C  o  m  p  i  l  e  r     D  i  r  e  c  t  i  v  e  s
+% *****************************************************************************
+\subsection{Non-Semantic Compiler Directives}
+
+Whilst \glspl{compiler directive} are implementation defined, the delimiters of \glspl{non-semantic compiler directive} should not be. They should be denoted by an opening \verb|(*$| and a closing \verb|*)| delimiter.
+
+\subsubsection{Rationale}
+
+Although \cite{Wirth88} mentions \verb|(*$| and \verb|*)| as commonly used delimiters for \glspl{compiler directive}, it does not specify their use in any normative manner. Some compiler implementors have taken this to mean that the delimiters are implementation defined. Several compilers still in use today do not follow the convention, for example the venerable MOCKA compiler \cite{MOCKA}.
+
+As a result, source code with \glspl{compiler directive} is often not portable across different implementations. This is unfortunate, because non-semantic directives can safely be ignored in the event that they are not supported. An implementation may choose to issue warnings about unrecognised directives, but in order to be able to identify a directive as such in the first place, a common delimiter convention needs to be followed across implementations.
+
+\subsubsection{Backwards compatibility}
+
+Non-compliant directives within existing source code should be replaceable with minimal effort using regular expressions and a filter program such as \verb|sed| or \verb|awk|. 
+
+
+% *****************************************************************************
+% S  e  m  a  n  t  i  c     C  o  m  p  i  l  e  r     D  i  r  e  c  t  i  v  e  s
+% *****************************************************************************
+\subsection{Semantic Compiler Directives}
+
+\Glspl{semantic compiler directive} should \textbf{not} be denoted by the same delimiters used for \glspl{non-semantic compiler directive}.
+
+\subsubsection{Rationale}
+
+Whilst \glspl{non-semantic compiler directive} can safely be ignored, \glspl{semantic compiler directive} cannot. A \gls{semantic compiler directive} that is not supported by an implementation must be reported as an error. Consequently, an implementation needs to be able to distinguish between semantic and non-semantic directives. In order to do so, different delimiters must be used.
+
+\subsubsection{Substitute}
+
+Some Modula-2 compilers have used a \verb|%|
+prefix to denote \glspl{compiler directive}, in particular for conditional compilation, for example the  MOCKA compiler \cite{MOCKA}.
+It is recommended to follow that convention to denote \glspl{non-semantic compiler directive} if any are provided. The \verb|%|
+symbol is not otherwise used in the language.
+
+\subsubsection{Backwards compatibility}
+
+Non-compliant directives within existing source code should be replaceable with minimal effort using regular expressions and a filter program such as \verb|sed| or \verb|awk|. 
+
+
+\section{Syntax}
+
+% *****************************************************************************
+% M  u  l  t  i  -  d  i  m  e  n  s  i  o  n  a  l     A  r  r  a  y  s
+% *****************************************************************************
+\subsection{Multi-Dimensional Arrays}
+
+Inconsistent definition or declaration of multi-dimensional arrays should be \textbf{warned} about.
+
+\subsubsection{Rationale}
+
+\cite{Wirth88} specifies alternative syntax forms to define and declare multi-dimensional array types:
+
+\noindent
+\begin{verbatim}
+TYPE Matrix = ARRAY [0 .. Cols], [0 .. Rows] OF REAL;
+\end{verbatim}
+
+\noindent is an abbreviation of and thus equivalent to 
+\begin{verbatim}
+TYPE Matrix = ARRAY [0 .. Cols] OF ARRAY [0 .. Rows] OF REAL;
+\end{verbatim}
+
+\par\noindent The availability of alternative syntax forms violates SSP and COSP. The more dimensions an array type has, the more preferable the abbreviated form becomes. However, it is more effort to remove or deprecate the long form. The impact of removal or deprecation on existing sources with multi-dimensional arrays would likely be high. It is less effort and sufficient to modify an implementation to detect and warn about mixing both forms in any given compilation unit.
+
+\subsubsection{Backwards compatibility}
+
+The proposed mitigation does not impact the compatibility of legacy sources.
+
+
+% *****************************************************************************
+% L  o  c  a  l     M  o  d  u  l  e  s
+% *****************************************************************************
+\subsection{Local Modules}
+
+Local Modules should be \textbf{deprecated}.
+
+\subsubsection{Rationale}
+If there is sufficient reason to delegate certain responsibilities of a library module to a local module, then there is also sufficient reason to delegate those responsibilities to a separate library module. There is no reason why a local module should be chosen over a separate library.
+
+Furthermore, a local module within a library module unnecessarily increases the line count of the library module and thus reduces its readabililty and maintainability. It runs counter to the very rationale of decomposing source code into separate modules in the first place.
+
+Last but not least, a test environment for testing a local module must necessarily be provided within the hosting module.  This further increases clutter and poses the question whether to release the module with or without the embedded test environment. By contrast, a proper library module can be imported into any number of lexically independent test environments.
+
+\subsubsection{Substitution}
+Local modules should be removed from their enclosing module and provided as proper library modules with their own definition and implementation parts instead.
+
+\subsubsection{Backwards compatibility}
+
+Backwards compatibility can be provided via legacy compiler switch.
+
+\subsubsection{Private-Use Aspect}
+
+The private-use aspect of local modules is lost when they are excised from their host modules and converted into library modules. This aspect is useful when the local module's API is considered unstable and subject to frequent changes without prior notice. However, this can be far more easily implemented by introducing a \gls{non-semantic compiler directive} that specifies a library's intended client modules and causes the compiler to issue warnings whenever such a library is imported by any module other than the intended client modules.
+
+\begin{verbatim}
+DEFINITION MODULE PrivateUseLib; (*$CLIENTS=FooLib, BarLib, BazLib*)
+
+(* ATTENTION !!! This module is intended for private use only.
+ * Its API is subject to frequent change without prior notice.
+ * The compiler will issue a warning when it is imported from
+ * any other than the intended client modules. *)
+...
+END PrivateUseLib.
+\end{verbatim}
+
+
+% *****************************************************************************
+% U  n  a  r  y     M  i  n  u  s
+% *****************************************************************************
+\subsection{Unary Minus}
+
+Unary minus should only be permitted before a factor.
+
+\begin{verbatim}
+simpleExpression :=
+  ( '+' )? term ( addOp term )* | '-' factor
+  ;
+\end{verbatim}
+
+\noindent instead of
+
+\begin{verbatim}
+simpleExpression :=
+  ( '+' | '-' )? term ( addOp term )*
+  ;
+\end{verbatim}
+
+\subsubsection{Rationale}
+\cite{Wirth88} does not state the scope of the unary minus operator other than through the grammar.\\
+
+\noindent An expression of the form
+
+\begin{verbatim}
+- a * b + c
+\end{verbatim}
+
+\noindent could be interpreted \emph{mathematically} correct
+\begin{verbatim}
+(-a) * b + c
+\end{verbatim}
+
+\noindent or \emph{grammatically} correct
+\begin{verbatim}
+-(a * b + c)
+\end{verbatim}
+
+The former interpretation conforms to mathematical convention. The latter can be deduced from the grammar in \cite{Wirth88} and is supposed to be the correct interpretation. However, this violates the principle of least astonishment (POLA) and some implementations therefore follow the mathematically correct interpretation, for example the ACK compiler \cite{ACK} and the MOCKA compiler \cite{MOCKA}. Requiring a factor after a unary minus forces the use of parentheses whenever there is more than one factor to follow which makes programmer intent explicit.
+
+\subsubsection{Backwards compatibility}
+
+Unary minus is an infrequently used operation. When it is used, it is usually in a form that is compliant with the syntax proposed in this paper. In the unlikely event that it is not in a compliant form, the source code is ambiguous and needed to be fixed anyhow. It may well have been written for and tested with a compiler that uses a different interpretation than the compiler it is about to be compiled with. The proposed mitigation will thereby help identify any non-compliant occurrences which can then be corrected with minimal effort.
+
+
+\section{Pervasives}
+
+% *****************************************************************************
+% P  e  r  v  a  s  i  v  e     F  u  n  c  t  i  o  n  s
+% *****************************************************************************
+\subsection{Conversion}
+
+Pervasive functions \verb|FLOAT()| and \verb|TRUNC()| should be \textbf{deprecated}.
+
+\subsubsection{Rationale}
+
+\cite{Wirth88} specifies pevasive conversion function \verb|VAL()| that covers all possible use cases for conversion between whole number types. There is no reason why \verb|VAL()| could not also cover all possible use cases for conversions between whole and real number types.
+
+The presence of alternative functions violates SSP. The same applies to any additional conversion functions provided by some implementations such as \verb|INT()|, \verb|CARD()| and \verb|LFLOAT()|\footnote{By contrast, \texttt{CHR()} and \texttt{ORD()} are not conversion functions. \texttt{CHR()} performs a lookup while \texttt{ORD()} returns a property. Their availability does not violate SRP and they are not to be considered for removal or deprecation.}.
+ 
+Furthermore, function \verb|FLOAT()| is confusingly named since the type it converts to is \verb|REAL| and there is no type \verb|FLOAT|. \cite{Wirth88} does not specify how real number types are to be implemented. They need not be implemented as floating point numbers but could be implemented as binary coded decimals, for instance. The naming of function \verb|FLOAT()| is therefore misleading and it violates COSP and POLA. Bad naming promotes bad habits.
+
+Last but not least, function \verb|TRUNC()| violates SRP \cite{Martin03} as it represents both a conversion function and the mathematical function $trunc(x)$. Its name is misleading as it does not suggest conversion, violating POLA. Conversion should be the responsibility of function \verb|VAL()| and truncation the responsibility of a math function \verb|trunc()| to be provided in a library such as \verb|MathLib| and return the same type as its argument, it should not perform any conversion.
+
+\subsubsection{Substitution}
+
+Function \verb|VAL()| should be extended to provide conversions between whole and real number types.
+
+\subsubsection{Backwards compatibility}
+
+A compiler switch should be provided to enable and disable support for functions \verb|FLOAT()| and \verb|TRUNC()|. Support should be disabled by default in order to discourage their use. When enabled, a deprecation warning should be issued whenever these functions are used.
+
+\subsubsection{Implementation}
+It should be noted that function \verb|VAL()| is not generally implemented as a single function, nor should it be. Instead, it is usually and should be implemented as a built-in macro, resolved at compile time to a function internal to the compiler that is specific to the source and target types of its arguments, since the types are known at compile time. It thereby simplifies the user interface without incurring the penalty of increasing the complexity of its implementation. The specific conversion functions need to be within the compiler anyhow, but they should not be individually exposed in the user interface.
+
+
+\section{Semantics}
+
+% *****************************************************************************
+% E  x  p  o  r  t  e  d     V  a  r  i  a  b  l  e  s
+% *****************************************************************************
+\subsection{Exported Variables}
+
+Variables defined in definition parts should be exported \textbf{read-only}. 
+
+\subsubsection{Rationale}
+
+Allowing a client module to write to imported variables violates the principle of information hiding \cite{Parnas72}. \cite{Wirth88} recommends that imported variables should be treated ``read-only''.
+
+\subsubsection{Substitution}
+
+A setter procedure can be defined and exported by the same module if needed.
+
+\begin{verbatim}
+DEFINITION MODULE Foo;
+
+VAR bar : Bar; (* read-only *)
+
+PROCEDURE SetBar ( value : Bar );
+
+END Foo.
+\end{verbatim}
+
+\subsubsection{Backwards compatibility}
+
+Considering that \cite{Wirth88} explicitly recommends to treat imported variables ``read-only", nobody should have written any code that treats them as mutable. Unfortunately, there will be code written by careless programmers who didn't follow the advice. The paranoid maintainer may therefore provide a compiler switch to enable and disable write-access to imported variables, which should then be disabled by default.
+
+
+% *****************************************************************************
+% P  o  i  n  t  e  r     V  a  r  i  a  b  l  e  s
+% *****************************************************************************
+\subsection{Pointer Variables}
+All pointer variables should be initialised to \verb|NIL| and deallocation should reset them to \verb|NIL|.
+
+\subsubsection{Rationale}
+The two primary paradigms of Modula-2 are (a) program decomposition through data encapsulation and information hiding, and (b) reliability through type safety. Opaque pointer types are the primary instrument through which the former is achieved. The ability to test whether an opaque pointer type has been allocated or deallocated is central to achieving the latter.
+
+\subsubsection{Backwards compatibility}
+
+The proposed mitigation does not impact the compatibility of legacy sources.
+
+
+% *****************************************************************************
+% U  n  s  a  f  e     F  a  c  i  l  i  t  i  e  s
+% *****************************************************************************
+\subsection{Unsafe Facilities}
+
+Any facility that bypasses the type safety provided by the language should be disabled by default.
+
+\subsubsection{Unsafe Facilities provided by SYSTEM}
+\cite{Wirth88} defines pseudo-module \verb|SYSTEM| as a container for unsafe facilities. The facilities provided therein are only enabled by import. This is desirable as it sensitises programmers to the fact that the facilities are unsafe and thereby discourages their use.
+ 
+\subsubsection{Unsafe Facilities NOT provided by SYSTEM}
+Unfortunately, not all unsafe facilities are provided through pseudo-module \verb|SYSTEM|. Two unsafe facilities are provided in the language core and are enabled by default without import:
+\begin{enumerate}[itemindent=-0.75em]
+\item Unsafe type transfers, also known as \emph{type casts}
+\item Records with variant parts, also known as \emph{variant records}
+\end{enumerate}
+
+\par\noindent This is a violation of SPP and given its implications for program safety it is unacceptable. In order to mitigate this situation, support for type casts and variant records should be disabled by default and require enabling by compiler switch.
+
+\subsubsection{Ideal World Scenario}
+
+In an ideal world, the type cast syntax would be replaced with a \verb|CAST()| function provided by \verb|SYSTEM| as in ISO Modula-2 \cite{ISO96}, and variant records with type safe extensible records as in Oberon \cite{Wirth90}. However, this would constitute a substantial language revision and as such go beyond the scope of the maintenance aspect of this paper. It would also run counter to the objective to allow the compilation of programming examples in the literature with minimal effort.
+
+
+% *****************************************************************************
+% L  a  n  g  u  a  g  e     E  x  t  e  n  s  i  o  n  s
+% *****************************************************************************
+\section{Language Extensions}
+
+\subsection{Availability}
+All language extensions should be disabled by default and only enabled by compiler switch.
+
+\subsubsection{Rationale}
+Disabling language extensions by default aids and promotes writing of portable source code.
+
+
+% *****************************************************************************
+% S  m  a  l  l  e  s  t     A  d  d  r  e  s  s  a  b  l  e     U  n  i  t
+% *****************************************************************************
+\subsection{Smallest Addressable Unit}
+
+Under no circumstances should any implementation change the definition of type \verb|SYSTEM.WORD|. However, an implementation targeting an architecture where the smallest addressable storage unit is eight bits wide should provide an alias type \verb|BYTE| in module \verb|SYSTEM| as follows:
+
+\begin{verbatim}
+TYPE BYTE = WORD;
+\end{verbatim}
+
+\subsubsection{Rationale}
+
+\cite{Wirth88} specifies \verb|SYSTEM.WORD| as the smallest addressable unit\footnote{When the first report on Modula-2 was written it was still common to call the smallest addressable storage unit \emph{a word}. Since then the terminology has changed and it has become common to use the term \emph{byte} instead.}. Whilst the report permits provision of \emph{additional} facilities in \verb|SYSTEM|, it does not permit \emph{alterations} of \verb|SYSTEM| facilities specified in the report.
+
+It would thus be permissible to provide an additional type \verb|SYSTEM.MACHINEWORD| that represents a machine word larger than the smallest addressable unit, but it is not permissible to change \verb|SYSTEM.WORD| to represent a machine word that is not the smallest addressable unit.
+
+
+% *****************************************************************************
+% F  o  r  e  i  g  n     I  d  e  n  t  i  f  i  e  r  s
+% *****************************************************************************
+\subsection{Foreign Identifiers}
+
+An implementation that provides a means to interface to \glspl{foreign API}, should also allow the use of \glspl{foreign identifier}. Such an identifier may contain one or more dollar \verb|$| and/or lowline \verb|_| characters. Support of \glspl{foreign identifier} should be disabled by default and enabled by compiler switch when needed.
+
+To avoid any collission with name mangled symbols generated by the Modula-2 compiler, no consecutive and no trailing dollar signs should be permitted; no leading, no consecutive and no trailing lowlines should be permitted; further, dollar signs and lowlines should not be permitted within module identifiers. 
+
+\subsubsection{Rationale}
+
+Operating system \Glspl{API} and other \glspl{foreign API} often include variables and procedures with identifiers that include dollar (predominantly on the VMS operating system) and lowline (predominantly on Unix systems and C \glspl{API} in general).
+
+Some Modula-2 implementations already support the use of special characters in identifiers for this purpose. For any other purposes the use of such a facility should however be discouraged.
+
+
+% *****************************************************************************
+% F  o  r  e  i  g  n     D  e  f  i  n  i  t  i  o  n     M  o  d  u  l  e  s
+% *****************************************************************************
+\subsection{Foreign Definition Modules}
+
+An implementation that provides a means to interface to \glspl{foreign API}, should use a \gls{non-semantic compiler directive} to mark a definition module as a \gls{foreign definition module}.
+
+\subsubsection{Rationale}
+
+\cite{Wirth88} does not mention \glspl{foreign definition module}. As a result, implementors have invented their own syntax to mark a definition module as foreign, varying between implementations. However, the corresponding implementation could in principle be done in Modula-2. The marking of a definition module as foreign does not alter its semantics. Consequently, any such marking constitutes a \gls{non-semantic compiler directive}.
+
+\subsubsection{Recommendation}
+
+The directive should be placed after the module header, its recommended syntax is as follows:
+
+\begin{verbatim}
+ffiPragma :=
+  '(*$' ffiPragmaKey '=' '"' foreignAPI '"' '*)'
+  ;
+  
+ffiPragmaKey :=
+  'F' | /* if implementation uses single-letter keys */
+  'FFI' /* if implementation uses multi-letter keys */
+  ; 
+
+foreignAPI :=
+  'ASM' | 'C' | 'Fortran' | 'Pascal' | ...
+  ;
+\end{verbatim}
+
+\section{Miscellaneous}
+
+% *****************************************************************************
+% F  i  l  e  n  a  m  e     S  u  f  f  i  x  e  s
+% *****************************************************************************
+\subsection{Filename Suffixes}
+
+Modula-2 implementations should \textbf{only} recognise input files with suffixes \verb|def| and \verb|mod|.
+
+\subsubsection{Rationale}
+
+Neither \cite{Wirth78} nor \cite{Wirth88} mention filename suffixes for Modula-2 source files. Instead, a de-facto standard has been established by the compilers distributed by ETH Zurich: Suffix \verb|def| is used for definition module files and suffix \verb|mod| for implementation and program module files.
+
+However, the absence of any mentioning of filename suffixes in \cite{Wirth78} and \cite{Wirth88} has been taken by some implementors as an invitation to define their own non-standard filename suffixes.
+
+The use of non-standard suffixes leads to unnecessary effort when compiling sources across different implementations. Moreover, it tends to cause confusion amongst implementors of text editors and source code renderers. In some cases, source files with suffixes \verb|def| and \verb|mod| were rendered without syntax highlighting by the affected software while support for the non-standard suffixes caused conflicts with notations that use those suffixes bona-fide.
+
+
+% *****************************************************************************
+% P  r  e  -  R  e  v  i  s  i  o  n     C  o  m  p  i  l  e  r  s
+% *****************************************************************************
+\subsection{Pre-Revision Compilers}
+An implementation that follows the original monograph \cite{Wirth78} or the second edition \cite{Wirth83} should be updated to follow the third \cite{Wirth85} or, preferably the fourth \cite{Wirth88} edition.
+
+\subsubsection{Rationale}
+Prior to \cite{Wirth85} a definition module was required to have an export list. This was unnecessary duplication since the purpose of a definition module is to export all its contents in the first place. 
+
+
+%\newpage
+
+% *****************************************************************************
+% D  e  f  i  n  i  t  i  o  n  s
+% *****************************************************************************
+\printglossary[title=Definitions, toctitle=Definitions]
+
+
+% *****************************************************************************
+% R  e  f  e  r  e  n  c  e  s
+% *****************************************************************************
+\bibliographystyle{alpha}
+\bibliography{Classic-M2-Compiler-Maintenance}
+\end{document}
