@@ -34,11 +34,11 @@
 % These packages are incorporated in the memoir class to one degree or another.
 
 %%% FONTS
+\usepackage{courier}
 \usepackage{lmodern}
 \makeatletter
 \newcommand{\verbatimfont}[1]{\def\verbatim@font{#1}}
 \makeatother
-\usepackage{courier}
 
 %%% HEADERS & FOOTERS
 \usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
@@ -80,6 +80,7 @@
 \newcommand\middledots{\textperiodcentered\textperiodcentered\textperiodcentered}
 \newcommand\zurich{Z\"{u}rich}
 
+
 %%% Glossary
 \usepackage[automake, nonumberlist, style=altlist]{glossaries}
 \makeglossaries
@@ -115,6 +116,7 @@
   description={A compiler directive that alters the semantics of the
   source code}
 }
+
 \usepackage{pifont}
 \renewcommand{\glstextformat}[1]{\textit{#1}}
 
@@ -520,6 +522,7 @@ simpleExpression :=
 \end{verbatim}
 
 \subsubsection{Rationale}
+
 \cite{Wirth88} does not state the scope of the unary minus operator other than
 through the grammar.\\
 
@@ -700,6 +703,7 @@ unsafe and thereby discourages their use.
 Unfortunately, not all unsafe facilities are provided through pseudo-module
 \verb|SYSTEM|. Two unsafe facilities are provided in the language core and are
 enabled by default without import:
+
 \begin{enumerate}[itemindent=-0.75em]
 \item Unsafe type transfers, also known as \emph{type casts}
 \item Records with variant parts, also known as \emph{variant records}
