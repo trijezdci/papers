@@ -84,6 +84,12 @@
 %%% Glossary
 \usepackage[automake, nonumberlist, style=altlist]{glossaries}
 \makeglossaries
+\newglossaryentry{offending facility}{
+  name=offending facility, plural=offending facilities,
+  description={A language facility that is (a) outdated, harmful or bad habit
+  forming in general,\linebreak or (b)~violates any of the design principles
+  in section \ref{design-principles}} in particular
+}
 \newglossaryentry{API}{
   name=API,
   description={Application programming interface}
@@ -147,19 +153,20 @@
 % A  b  s  t  r  a  c  t
 % *****************************************************************************
 \begin{abstract}
-The classical Modula-2 language was specified in \cite{Wirth78} by Niklaus Wirth
-at ETH Z\"{u}rich in 1978. The last revision \cite{Wirth88} was published in 1988.
-Many computer science books of that era have used Modula-2 for their programming
-examples. Many of these are still valuable educational resources in computer
-science education today. In order to compile and run the examples therein, it is
-essential to have compilers available that follow the classical Modula-2 language
-definition and run on modern computer hardware and operating systems. While most
-Modula-2 compilers of that era have disappeared, a few of them have since been
-re-released under open source licenses. Although the original authors have long
-ceased work on these compilers, new maintainers have stepped in. This paper gives
-recommendations for maintenance work on such compilers in a manner that balances
-the aim to modernise with the need to retain the capability of compiling historic
-programming examples in the literature with minimal effort.
+The classical Modula-2 language was specified in \cite{Wirth78} by Niklaus
+Wirth at ETH Z\"{u}rich in 1978. The last revision \cite{Wirth88} was
+published in 1988. Many computer science books of that era used Modula-2 for
+their programming examples. Many of these are still valuable educational
+resources in computer science education today. In order to compile and run the
+examples therein, it is essential to have compilers available that follow the
+classical Modula-2 language definition and run on modern computer hardware and
+operating systems. While most Modula-2 compilers of that era have disappeared,
+a few have since been re-released under open source licenses. Although the
+original authors have long ceased work on these compilers, new maintainers
+have stepped in. This paper gives recommendations for maintenance work on such
+compilers in a manner that balances the aim to modernise with the need to
+retain the capability of compiling historic programming examples in the
+literature with minimal effort.
 \end{abstract}
 
 
@@ -169,45 +176,53 @@ programming examples in the literature with minimal effort.
 % D  e  s  i  g  n     P  r  i  n  c  i  p  l  e  s
 % *****************************************************************************
 \subsection{Design Principles}
+\label{design-principles}
 
 The following design principles strongly informed the recommendations in this paper:
 
 \subsubsection{Single Syntax Principle (SSP)}
+\label{SSP}
 
-There should be one and \textbf{only one} syntax form to express any given concept.
+There should be one and \emph{only one} syntax form to express any given concept \cite{Dijkstra78}.
 
 \subsubsection{Literate Syntax Principle (LSP)}
+\label{LSP}
 
-Syntax should be chosen to aid \textbf{readability} and \textbf{comprehensibility}
-by a human reader.
+Syntax should be chosen to aid readability and comprehensibility by a human
+reader \cite{Knuth84}.
 
 \subsubsection{Consistency of Syntax Principle (COSP)}
+\label{COSP}
 
-Syntax should be \textbf{consistent}. Analogous concepts should be expressed by
+Syntax should be consistent. Analogous concepts should be expressed by
 analogous syntax.
 
 \subsubsection{Principle of Least Astonishment (POLA)}
+\label{POLA}
 
 Of any number of alternative syntax forms or semantics, the one likely to cause
-the \textbf{least} astonishment for a human reader should be chosen and the
-alternatives should be discarded.
+the least astonishment for a human reader should be chosen and the alternatives
+should be discarded \cite{Geoffrey87}.
 
 \subsubsection{Single Responsibility Principle (SRP)}
+\label{SRP}
 
-Units of decomposition, such as modules and procedures should have a
-\textbf{single} focus and purpose.
+Units of decomposition, such as modules and procedures should have a single
+focus and purpose \cite{Martin09}.
 
 \subsubsection{Principle of Information Hiding (POIH)}
+\label{POIH}
 
-Implementation specific details should always be \textbf{hidden}, public access
-should be \textbf{denied}.
+Implementation specific details should always be hidden, public access should
+be denied \cite{Parnas72}.
 
 \subsubsection{Safety Perimeter Principle (SPP)}
+\label{SPP}
 
 Facilities that undermine the safety otherwise safeguarded within the language
-should be segregated from other facilities. Their use should require explicit
-intent of the author and be syntactically recognisable to alert author,
-maintainer and reader of the implications on safety.
+should be segregated from other facilities \cite[chapter~29]{Wirth88}. Their use should require an
+explicit expression of intent by the author and be syntactically recognisable
+so as to alert the author, maintainer and reader of the possible implications.
 
 
 % *****************************************************************************
@@ -218,29 +233,32 @@ maintainer and reader of the implications on safety.
 The primary objectives for the recommendations in this paper are:
 
 \renewcommand{\labelenumi}{(\arabic{enumi})}
-\begin{enumerate}[itemindent=-0.75em]
-\item to remove facilities that are harmful, outdated or violate design principles
-\item to resolve ambiguities in \cite{Wirth88} and incompatibilities between implementations
-\item to retain capability to compile programming examples in the literature with minimal effort
+\begin{enumerate}[leftmargin=!, labelindent=-0.75em, itemindent=0em]
+\item to remove facilities that are harmful, outdated or violate design
+principles
+\item to resolve ambiguities in \cite{Wirth88} and incompatibilities between
+implementations
+\item to maintain the capability to compile programming examples in the
+literature with \raggedright{minimal~effort}
 \end{enumerate}
 
 \subsubsection{Weighing Objectives by Impact}
 
-\noindent The objectives given above may from case to case be in conflict with
-one another. Which one should be given preference in the event of a conflict
+\noindent The objectives given above may from case to case conflict with one
+another. Which objective should be given preference in the event of a conflict
 depends on the following factors:
 
 \begin{enumerate}[itemindent=-0.75em]
-\item the severity of the offending facility
-\item the estimated frequency of use of the offending facility
-\item the effort to update sources impacted by change or removal of the offending facility
+\item the severity of the \gls{offending facility}
+\item the estimated frequency of use of the \gls{offending facility}
+\item the effort to update sources impacted by change or removal of the \gls{offending facility}
 \end{enumerate}
 
-\noindent The higher the severity of an offending facility, the stronger is the
-case for change or removal. Likewise, the lower the estimated frequency of use
-and the less the effort to update impacted sources, the stronger the case for
-change or removal. In the event that the estimated frequency of use is high and
-the effort to update impacted sources is significant, deprecation is recommended.
+\noindent The greater the severity of an \gls{offending facility}, the stronger
+is the case for \emph{change} or \emph{removal}; the lower the estimated
+frequency of use and the less the effort to update impacted sources, the
+stronger the case for \emph{change} or \emph{removal}. In the event that
+the estimated frequency of use is high and the effort to update impacted sources is significant, \emph{deprecation} is recommended.
 
 
 % *****************************************************************************
@@ -248,29 +266,31 @@ the effort to update impacted sources is significant, deprecation is recommended
 % *****************************************************************************
 \subsection{Mitigation Methods}
 
-Mitigation of an offending facility falls into the following categories:
+Terms of mitigation methods used in this paper have well defined meanings:
 
 \subsubsection{Warning}
 
-A warning should be issued for each and every use of the offending facility.
+A warning should be issued for each and every use of the
+\gls{offending facility}.
 
 \subsubsection{Change}
 
-The offending facility should be replaced with a proposed alternative.
+The \gls{offending facility} should be replaced with a proposed alternative.
 
 \subsubsection{Deprecation}
 
-A compiler switch to enable and disable the offending facility should be
-provided and it should be disabled by default. When it is enabled, a deprecation
-warning should be isued for each and every use of the offending facility.
+A compiler switch to enable and disable the \gls{offending facility} should
+be provided and it should be disabled by default. When it is enabled, a
+deprecation warning should be isued for each and every use of the
+\gls{offending facility}.
 
 \subsubsection{Removal}
 
-Support for the offending facility should be removed altogether.\\
+Support for the \gls{offending facility} should be removed altogether.\\
 
-\par\noindent From an educational perspective, the availability of offending
-facilities promotes bad habits. Replacement or removal is therefore generally
-preferable to warning or deprecation.
+\par\noindent From an educational perspective, the availability of
+\glspl{offending facility} promotes bad habits. Replacement or removal
+is therefore generally preferable to warning or deprecation.
 
 
 \section{Lexis}
@@ -280,14 +300,14 @@ preferable to warning or deprecation.
 % *****************************************************************************
 \subsection{Octal Literals}
 
-Support for octal literals should be \textbf{removed}.
+Support for octal literals should be \emph{removed}.
 
 \subsubsection{Rationale}
 
 The use of octal numbers has long been outdated. Further, the \verb|B| and
 \verb|C| suffixes used to denote octal literals are also legal digits within
 hexadecimal literals, which is confusing to human readers of the source code as
-it violates POLA and it unnecessarily complicates the lexing of literals.
+it violates POLA [\ref{POLA}] and unnecessarily complicates lexing.
 
 \subsubsection{Substitute}
 
@@ -312,11 +332,11 @@ octal literals could be deprecated instead.
 \subsection{Synonym Symbols}
 
 Support for synonym symbols \verb|<>|, \verb|&| and \verb|~| should be
-\textbf{removed}.
+\emph{removed}.
 
 \subsubsection{Rationale}
 
-Synonym symbols violate SSP and they are are notably \textbf{absent} from the
+Synonym symbols violate SSP and they are are notably \emph{absent} from the
 grammar in \cite{Wirth88}.
 
 The inequality operator symbol \verb|#| is preferable to its synonym \verb|<>|
@@ -377,7 +397,7 @@ minimal effort using regular expressions and a filter program such as
 % *****************************************************************************
 \subsection{Semantic Compiler Directives}
 
-\Glspl{semantic compiler directive} should \textbf{not} be denoted by the same
+\Glspl{semantic compiler directive} should \emph{not} be denoted by the same
 delimiters used for \glspl{non-semantic compiler directive}.
 
 \subsubsection{Rationale}
@@ -393,9 +413,9 @@ must be used.
 
 Some Modula-2 compilers have used a \verb|%|
 prefix to denote \glspl{compiler directive}, in particular for conditional
-compilation, for example the  MOCKA compiler \cite{MOCKA}. It is recommended to
-follow that convention to denote \glspl{non-semantic compiler directive} if any
-are provided. The \verb|%|
+compilation, for example the  MOCKA compiler \cite{MOCKA}. We recommend to
+follow that convention to denote \glspl{non-semantic compiler directive}
+if any are provided. The \verb|%|
 symbol is not otherwise used in the language.
 
 \subsubsection{Backwards compatibility}
@@ -412,8 +432,7 @@ minimal effort using regular expressions and a filter program such as
 % *****************************************************************************
 \subsection{Multi-Dimensional Arrays}
 
-Inconsistent definition or declaration of multi-dimensional arrays should be
-\textbf{warned} about.
+Inconsistent definition or declaration of multi-dimensional arrays should trigger \emph{warnings}.
 
 \subsubsection{Rationale}
 
@@ -431,13 +450,14 @@ TYPE Matrix = ARRAY [0 .. Cols], [0 .. Rows] OF REAL;
 TYPE Matrix = ARRAY [0 .. Cols] OF ARRAY [0 .. Rows] OF REAL;
 \end{lstlisting}
 
-\par\noindent The availability of alternative syntax forms violates SSP and
-COSP. The more dimensions an array type has, the more preferable the
-abbreviated form becomes. However, it is more effort to remove or deprecate
-the long form. The impact of removal or deprecation on existing sources with
-multi-dimensional arrays would likely be high. It is less effort and sufficient
-to modify an implementation to detect and warn about mixing both forms in any
-given compilation unit.
+\par\noindent The availability of alternative syntax forms violates
+SSP [\ref{SSP}] and COSP [\ref{COSP}]. The more dimensions an array type has,
+the more preferable the abbreviated form becomes. However, it is more effort
+to \emph{remove} or \emph{deprecate} the long form. The impact of
+\emph{removal} or \emph{deprecation} on existing sources with
+multi-dimensional arrays would likely be high. It is less effort and
+sufficient to modify an implementation to detect and warn about mixing
+both forms in any given compilation unit.
 
 \subsubsection{Backwards compatibility}
 
@@ -449,44 +469,43 @@ The proposed mitigation does not impact the compatibility of legacy sources.
 % *****************************************************************************
 \subsection{Local Modules}
 
-Local Modules should be \textbf{deprecated}.
+Local Modules should be \emph{deprecated}.
 
 \subsubsection{Rationale}
 If there is sufficient reason to delegate certain responsibilities of a library
-module to a local module, then there is also sufficient reason to delegate those
-responsibilities to a separate library module. There is no reason why a local
-module should be chosen over a separate library.
+module to a local module, then there is also sufficient reason to delegate
+those responsibilities to a separate library module. There is no reason why a
+local module should be chosen over a separate library.
 
-Furthermore, a local module within a library module unnecessarily increases the
-line count of the library module and thus reduces its readabililty and
+Furthermore, a local module within a program or library module unnecessarily
+increases the line count of the module and thus reduces its readabililty and
 maintainability. It runs counter to the very rationale of decomposing source
 code into separate modules in the first place.
 
-Last but not least, a test environment for testing a local module must
-necessarily be provided within the hosting module.  This further increases
-clutter and poses the question whether to release the module with or without
-the embedded test environment. By contrast, a proper library module can be
-imported into any number of lexically independent test environments.
+Finally, a test environment for testing a local module must necessarily be
+provided within the hosting module.  This further increases clutter and poses
+the question whether to release the module with or without the embedded test
+environment. By contrast, a proper library module can be imported into any
+number of lexically independent test environments.
 
 \subsubsection{Substitution}
 Local modules should be removed from their enclosing module and provided as
-proper library modules with their own definition and implementation parts
-instead.
+proper library modules with their own definition and implementation parts.
 
 \subsubsection{Backwards compatibility}
 
-Backwards compatibility can be provided via legacy compiler switch.
+Backwards compatibility can be provided via compiler switch.
 
 \subsubsection{Private-Use Aspect}
 
-The private-use aspect of local modules is lost when they are excised from
-their host modules and converted into library modules. This aspect is useful
-when the local module's API is considered unstable and subject to frequent
-changes without prior notice. However, this can be far more easily implemented
- by introducing a \gls{non-semantic compiler directive} that specifies a
- library's intended client modules and causes the compiler to issue warnings
- whenever such a library is imported by any module other than the designated
- client modules. An example is given below:
+The private-use aspect of local modules is lost when they are removed from
+their host modules and converted into library modules. However, this aspect
+is useful when the local module's API is considered unstable and subject to
+frequent changes. A satisfactory solution can be implemented easily by
+introducing a \gls{non-semantic compiler directive} that specifies a
+library's intended client modules and causes the compiler to issue warnings
+whenever such a library is imported by a module other than its designated
+client modules. An example is given below:
 
 \lstset{style=modula2}
 \begin{lstlisting}[escapechar=~]
@@ -544,22 +563,22 @@ through the grammar.\\
 
 The former interpretation conforms to mathematical convention. The latter can
 be deduced from the grammar in \cite{Wirth88} and is supposed to be the correct
-interpretation. However, this violates the principle of least astonishment
-(POLA) and some implementations therefore follow the mathematically correct
-interpretation, for example the ACK compiler \cite{ACK} and the MOCKA compiler
-\cite{MOCKA}. Requiring a factor after a unary minus forces the use of
-parentheses whenever there is more than one factor to follow which makes
-programmer intent explicit.
+interpretation. However, this violates POLA [\ref{POLA}] and some
+implementations therefore follow the mathematically correct interpretation,
+for example the ACK compiler \cite{ACK} and the MOCKA compiler \cite{MOCKA}.
+Requiring a factor after a unary minus forces the use of parentheses whenever
+there is more than one factor to follow which makes programmer intent explicit.
 
 \subsubsection{Backwards compatibility}
 
 Unary minus is an infrequently used operation. When it is used, it is usually
 in a form that is compliant with the syntax proposed in this paper. In the
 unlikely event that it is not in a compliant form, the source code is ambiguous
-and needed to be fixed anyhow. It may well have been written for and tested
-with a compiler that uses a different interpretation than the compiler it is
-about to be compiled with. The proposed mitigation will thereby help identify
-any non-compliant occurrences which can then be corrected with minimal effort.
+and needed to be fixed anyway. It may well have been written for and tested
+with a compiler that uses a different interpretation than the compiler now
+used to compile the sources. The proposed mitigation will thereby help
+identify any non-compliant occurrences which can then be corrected with
+minimal effort.
 
 
 \section{Pervasives}
@@ -570,7 +589,7 @@ any non-compliant occurrences which can then be corrected with minimal effort.
 \subsection{Conversion}
 
 Pervasive functions \verb|FLOAT()| and \verb|TRUNC()| should be
-\textbf{deprecated}.
+\emph{deprecated}.
 
 \subsubsection{Rationale}
 
@@ -579,28 +598,29 @@ all possible use cases for conversion between whole number types. There is no
 reason why \verb|VAL()| could not also cover all possible use cases for
 conversions between whole and real number types.
 
-The presence of alternative functions violates SSP. The same applies to any
-additional conversion functions provided by some implementations such as
-\verb|INT()|, \verb|CARD()| and \verb|LFLOAT()|\footnote{By contrast,
-\texttt{CHR()} and \texttt{ORD()} are not conversion functions. \texttt{CHR()}
-performs a lookup while \texttt{ORD()} returns a property. Their availability
-does not violate SRP and they are not to be considered for removal or
-deprecation.}.
+The presence of alternative functions violates SSP [\ref{SSP}]. The same
+applies to any additional conversion functions such as \verb|INT()|,
+\verb|CARD()| and \verb|LFLOAT()|\footnote{By contrast, \texttt{CHR()} and
+\texttt{ORD()} are not conversion functions. \texttt{CHR()} performs a
+lookup while \texttt{ORD()} returns a property. Their availability
+does not violate SRP and they should not be considered for removal
+or deprecation.} provided by some implementations.
  
 Furthermore, function \verb|FLOAT()| is confusingly named since the type it
 converts to is \verb|REAL| and there is no type \verb|FLOAT|. \cite{Wirth88}
 does not specify how real number types are to be implemented. They need not be
 implemented as floating point numbers but could be implemented as binary coded
 decimals, for instance. The naming of function \verb|FLOAT()| is therefore
-misleading and it violates COSP and POLA. Bad naming promotes bad habits.
+misleading and violates COSP [\ref{COSP}] and POLA [\ref{POLA}].
 
-Last but not least, function \verb|TRUNC()| violates SRP \cite{Martin03} as it
-represents both a conversion function and the mathematical function $trunc(x)$.
-Its name is misleading as it does not suggest conversion, violating POLA.
-Conversion should be the responsibility of function \verb|VAL()| and truncation
-the responsibility of a math function \verb|trunc()| to be provided in a
-library such as \verb|MathLib| and return the same type as its argument, it
-should not perform any conversion.
+Finally, function \verb|TRUNC()| violates SRP [\ref{SRP}] as it represents
+both a conversion function and the mathematical function $trunc(x)$.
+Its name is misleading as it does not suggest conversion, violating
+POLA [\ref{POLA}]. Conversion should be the responsibility of function
+\verb|VAL()| and truncation the responsibility of a math function
+\verb|trunc()| to be provided in a library such as \verb|MathLib| and
+return the same type as its argument, it should not perform any type
+conversion.
 
 \subsubsection{Substitution}
 
@@ -609,10 +629,7 @@ and real number types.
 
 \subsubsection{Backwards compatibility}
 
-A compiler switch should be provided to enable and disable support for
-functions \verb|FLOAT()| and \verb|TRUNC()|. Support should be disabled by
-default in order to discourage their use. When enabled, a deprecation warning
-should be issued whenever these functions are used.
+Backwards compatibility can be provided via compiler switch.
 
 \subsubsection{Implementation}
 It should be noted that function \verb|VAL()| is not generally implemented as a
@@ -633,12 +650,12 @@ interface.
 % *****************************************************************************
 \subsection{Exported Variables}
 
-Variables defined in definition parts should be exported \textbf{read-only}. 
+Variables defined in definition parts should be exported \emph{read-only}. 
 
 \subsubsection{Rationale}
 
-Allowing a client module to write to imported variables violates the principle
-of information hiding \cite{Parnas72}. \cite{Wirth88} recommends that imported
+Allowing a client module to write to imported variables violates POIH
+[\ref{POIH}] \cite{Parnas72}. \cite{Wirth88} recommends that imported
 variables should be treated ``read-only''.
 
 \subsubsection{Substitution}
@@ -659,9 +676,9 @@ END Foo.
 \subsubsection{Backwards compatibility}
 
 Considering that \cite{Wirth88} explicitly recommends to treat imported
-variables ``read-only", nobody should have written any code that treats them
+variables ``read-only", none should have written any code that treats them
 as mutable. Unfortunately, there will be code written by careless programmers
-who didn't follow the advice. The paranoid maintainer may therefore provide a
+who didn't follow his advice. The careful maintainer may therefore provide a
 compiler switch to enable and disable write-access to imported variables,
 which should then be disabled by default.
 
@@ -709,10 +726,10 @@ enabled by default without import:
 \item Records with variant parts, also known as \emph{variant records}
 \end{enumerate}
 
-\par\noindent This is a violation of SPP and given its implications for
-program safety it is unacceptable. In order to mitigate this situation, support
-for type casts and variant records should be disabled by default and require
-enabling by compiler switch.
+\par\noindent This is a violation of SPP [\ref{SSP}] and given its implications
+for program safety it is unacceptable. In order to mitigate this situation,
+support for type casts and variant records should be disabled by default and
+require enabling by compiler switch.
 
 \subsubsection{Ideal World Scenario}
 
@@ -784,7 +801,7 @@ compiler switch when needed.
 
 To avoid any collission with name mangled symbols generated by the Modula-2
 compiler, no consecutive and no trailing dollar signs should be permitted; no
-leading, no consecutive and no trailing lowlines should be permitted; further,
+leading, no consecutive and no trailing lowlines should be permitted. Further,
 dollar signs and lowlines should not be permitted within module identifiers. 
 
 \subsubsection{Rationale}
@@ -796,7 +813,7 @@ C \glspl{API} in general).
 
 Some Modula-2 implementations already support the use of special characters in
 identifiers for this purpose. For any other purposes the use of such a facility
-should however be discouraged.
+should be discouraged.
 
 
 % *****************************************************************************
@@ -812,10 +829,11 @@ as a \gls{foreign definition module}.
 
 \cite{Wirth88} does not mention \glspl{foreign definition module}. As a result,
 implementors have invented their own syntax to mark a definition module as
-foreign, varying between implementations. However, the corresponding
-implementation could in principle be done in Modula-2. The marking of a
-definition module as foreign does not alter its semantics. Consequently, any
-such marking constitutes de-facto a \gls{non-semantic compiler directive}.
+foreign, and this varies between implementations.
+
+However, the corresponding implementation could in principle be done in Modula-2. The marking of a definition module as foreign does not alter its
+semantics. Consequently, any such marking constitutes de-facto a
+\gls{non-semantic compiler directive}.
 
 \subsubsection{Recommendation}
 
@@ -845,27 +863,25 @@ foreignAPI :=
 % *****************************************************************************
 \subsection{Filename Suffixes}
 
-Modula-2 implementations should \textbf{only} recognise input files with
+Modula-2 implementations should \emph{only} recognise input files with
 suffixes \verb|def| and \verb|mod|.
 
 \subsubsection{Rationale}
 
 Neither \cite{Wirth78} nor \cite{Wirth88} mention filename suffixes for
-Modula-2 source files. Instead, a de-facto standard has been established by
-the compilers distributed by ETH Z\"{u}rich: Suffix \verb|def| is used for
+Modula-2 source files. A de-facto standard has been established by the
+compilers distributed by ETH Z\"{u}rich: Suffix \verb|def| is used for
 definition module files and suffix \verb|mod| for implementation and program
 module files.
 
-However, the absence of any mentioning of filename suffixes in \cite{Wirth78}
-and \cite{Wirth88} has been taken by some implementors as an invitation to
+The absence of any mentioning of filename suffixes in \cite{Wirth78} and
+\cite{Wirth88} has been taken by some implementors as an invitation to
 define their own non-standard filename suffixes.
 
 The use of non-standard suffixes leads to unnecessary effort when compiling
-sources across different implementations. Moreover, it tends to cause confusion
-amongst implementors of text editors and source code renderers. In some cases,
-source files with suffixes \verb|def| and \verb|mod| were rendered without
-syntax highlighting by the affected software while support for the non-standard
-suffixes caused conflicts with notations that use those suffixes bona-fide.
+sources across different implementations. Moreover, it has led to conflicts
+with other notations in and inconsistent support for Modula-2 by various text
+editors and source code renderers.
 
 
 % *****************************************************************************
@@ -879,7 +895,7 @@ second edition \cite{Wirth83} should be updated to follow the third
 \subsubsection{Rationale}
 Prior to \cite{Wirth85} a definition module was required to have an export
 list. This was unnecessary duplication since the purpose of a definition
-module is to export all its contents in the first place. 
+module is to export all its contents. 
 
 
 %\newpage
