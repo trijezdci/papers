@@ -5,6 +5,7 @@
 % See "book", "report", "letter" for other types of document.
 
 \documentclass[10pt,a4paper]{article}
+\newcommand\BK{Benjamin Kowarsch}
 
 %\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
 
@@ -27,6 +28,7 @@
 \usepackage{booktabs} % for much better looking tables
 \usepackage{listings} % for better formatting of source code
 \usepackage{xcolor} % for grey comments within source code
+\usepackage{url} % to position tilde at correct height
 %\usepackage{array} % for better arrays (eg matrices) in maths
 %\usepackage{paralist} % custom lists (eg. enumerate/itemize, etc.)
 %\usepackage{verbatim} % commenting out blocks of text & for better verbatim
@@ -46,8 +48,8 @@
 \fancyhf{}
 \lhead{\Title}
 \rhead{\thepage}
-\cfoot{\small\textsf{\color{gray}Copyright \textcircled{c}\hspace{0pt} 2018
-\Author\hspace{0pt} -- this draft is for peer review only}}
+\cfoot{\small\textsf{\color{gray}Copyright \textcopyright\hspace{0pt} 2018
+\BK\hspace{0pt} -- this draft is for peer review only}}
 % replace with `reproduction permitted for non-commercial use' in final doc
 
 %\renewcommand{\headrulewidth}{0pt} % customise the layout...
@@ -135,8 +137,8 @@
 % T  i  t  l  e
 % *****************************************************************************
 \title{On the Maintenance of Classic Modula-2 Compilers}
-\author{Benjamin Kowarsch}
-\date{September 2018 (Draft 4)}
+\author{\BK, Modula-2 Software Foundation}
+\date{September 2018 (Draft 5)}
 \makeatletter
 \let\Title\@title
 \makeatother
@@ -146,7 +148,7 @@
 
 
 \begin{document}
-\verbatimfont{\fontfamily{lmtt}\selectfont}
+\verbatimfont{\small\fontfamily{lmtt}\selectfont}
 \maketitle
 
 % *****************************************************************************
@@ -209,8 +211,8 @@ should be discarded \cite{Geoffrey87}.
 \subsubsection{Single Responsibility Principle (SRP)}
 \label{SRP}
 
-Units of decomposition, such as modules and procedures should have a single
-focus and purpose \cite{Martin09}.
+Units of decomposition, such as modules, procedures and functions should have
+a single focus and purpose \cite{Martin09}.
 
 \subsubsection{Principle of Information Hiding (POIH)}
 \label{POIH}
@@ -222,7 +224,7 @@ be denied \cite{Parnas72}.
 \label{SPP}
 
 Facilities that undermine the safety otherwise safeguarded within the language
-should be segregated from other facilities \cite[chapter~29]{Wirth88}. Their
+should be segregated from other facilities \cite[ch.~29]{Wirth88}. Their
 use should require an explicit expression of intent by the author and be
 syntactically recognisable so as to alert the author, maintainer and reader
 of the possible implications.
@@ -297,6 +299,13 @@ Support for the \gls{offending facility} should be removed altogether.\\
 \glspl{offending facility} promotes bad habits. Replacement or removal
 is therefore generally preferable to warning or deprecation.
 
+\subsubsection{Transformation}
+
+To be used in commbination with any of change, deprecation or removal.
+A conversion program should be provided that transforms source code that uses
+\glspl{offending facility} into semantically equivalent source code that
+complies with the recommendations given in this paper.
+
 
 \section{Lexis}
 
@@ -324,11 +333,9 @@ regardless of whether octal literals are recognised or not.
 
 \subsubsection{Backwards compatibility}
 
-Preferably, a filter program should be provided with the compiler to replace
-all occurrences of octal literals with \verb|CHR()| function calls in existing
-Modula-2 source files. This can be done on a lexical level and the code of the
-compiler's lexer could be reused to build such a filter program. Alternatively,
-octal literals could be deprecated instead.
+Preferably, \emph{transformation} should be used to replace all occurences of
+octal literals in existing Modula-2 sources. Alternatively, octal literals
+could be \emph{deprecated} instead.
 
 
 % *****************************************************************************
@@ -336,34 +343,31 @@ octal literals could be deprecated instead.
 % *****************************************************************************
 \subsection{Synonym Symbols}
 
-Support for synonym symbols \verb|<>|, \verb|&| and \verb|~| should be
+Support for synonym symbols \verb|<>|, \verb|&| and \url{~} should be
 \emph{removed}.
 
 \subsubsection{Rationale}
 
-Synonym symbols violate SSP and they are are notably \emph{absent} from the
-grammar in \cite{Wirth88}.
+The availability of alternative symbols violates SSP (\ref{SSP}) and they are
+are notably \emph{absent} from the grammar in \cite[pp.156-157]{Wirth88}.
 
 The inequality operator symbol \verb|#| is preferable to its synonym \verb|<>|
-because it resembles the mathematical inequality symbol $\neq$ and as a single
-character symbol it simplifies lexing. Reserved words \verb|AND| and \verb|NOT|
-are preferable to their respective synonyms \verb|&| and \verb|~| because of
-consistency: While there are synonyms for \verb|AND| and \verb|NOT|, there is
-none for \verb|OR|. Although \verb!|! could have been used to denote \verb|OR|,
-it is already used to separate case labels and would have caused ambiguity.
+because it resembles the mathematical inequality symbol \footnotesize
+\raisebox{0.35ex} {$\neq$} \normalsize and as a single character symbol it 
+simplifies lexing. Reserved words \verb|AND| and \verb|NOT| are preferable to
+their respective synonyms \verb|&| and \url{~} because of consistency: While
+there are synonyms for \verb|AND| and \verb|NOT|, there is none for \verb|OR|.
+Although \verb!|! could have been used to denote \verb|OR|, it is already used
+to separate case labels and would have caused ambiguity.
 
 \subsubsection{Substitute}
 
 Symbol \verb|#| can be used in place of \verb|<>|, while \verb|AND| can be used
-in place of \verb|&| and \verb|NOT| in place of \verb|~|.
+in place of \verb|&| and \verb|NOT| in place of \url{~}.
 
 \subsubsection{Backwards compatibility}
 
-Preferably, a filter program should be provided with the compiler to replace
-all occurences of the removed symbols with their respective counterparts in
-existing Modula-2 source files. This can be done on a lexical level and the
-code of the compiler's lexer could be reused to build such a filter program.
-Alternatively, synonym symbols could be deprecated instead.
+Preferably, \emph{transformation} should be used to replace all occurences of synonym symbols in existing Modula-2 sources. Alternatively, synonym symbols could be \emph{deprecated} instead.
 
 
 % *****************************************************************************
@@ -377,11 +381,12 @@ by an opening \verb|(*$| and a closing \verb|*)| delimiter.
 
 \subsubsection{Rationale}
 
-Although \cite{Wirth88} mentions \verb|(*$| and \verb|*)| as commonly used
-delimiters for \glspl{compiler directive}, it does not specify their use in any
-normative manner. Some compiler implementors have taken this to mean that the
-delimiters are implementation defined. Several compilers still in use today do
-not follow the convention, for example the venerable MOCKA compiler \cite{MOCKA}.
+Although \cite[p.18]{Wirth88} mentions \verb|(*| and \verb|*)| as delimiters
+for both comments and directives, it does not specify their use in any
+normative manner. Some compiler implementors have taken this to mean that
+the delimiters are implementation defined. Several compilers still in use
+today do not follow the convention, for example the venerable MOCKA compiler
+\cite{MOCKA}.
 
 As a result, source code with \glspl{compiler directive} is often not portable
 across different implementations. This is unfortunate, because non-semantic
@@ -442,8 +447,7 @@ trigger \emph{warnings}.
 
 \subsubsection{Rationale}
 
-\cite{Wirth88} specifies alternative syntax forms to define and declare
-multi-dimensional array types:
+\cite[p.138]{Wirth88} specifies alternative syntax forms for multi-dimensional array type declaration:
 
 \lstset{style=modula2}
 \begin{lstlisting}
@@ -552,28 +556,31 @@ simpleExpression :=
 through the grammar.\\
 
 \noindent An expression of the form
-
-\begin{verbatim}
+\begin{lstlisting}
 - a * b + c
-\end{verbatim}
+\end{lstlisting}
 
 \noindent could be interpreted \emph{mathematically} correct
-\begin{verbatim}
+\begin{lstlisting}
 (-a) * b + c
-\end{verbatim}
+\end{lstlisting}
 
 \noindent or \emph{grammatically} correct
-\begin{verbatim}
+\begin{lstlisting}
 -(a * b + c)
-\end{verbatim}
+\end{lstlisting}
 
 The former interpretation conforms to mathematical convention. The latter can
-be deduced from the grammar in \cite{Wirth88} and is supposed to be the correct
-interpretation. However, this violates POLA [\ref{POLA}] and some
-implementations therefore follow the mathematically correct interpretation,
-for example the ACK compiler \cite{ACK} and the MOCKA compiler \cite{MOCKA}.
-Requiring a factor after a unary minus forces the use of parentheses whenever
-there is more than one factor to follow which makes programmer intent explicit.
+be deduced from the grammar in \cite[pp.156-157]{Wirth88} and is intended to
+be the correct interpretation\footnote{The author obtained clarification on the precedence of unary minus from Prof. Wirth by email.}.
+
+\newpage
+
+\noindent However, this violates POLA [\ref{POLA}] and some implementations
+therefore follow the mathematically correct interpretation, for example the
+ACK compiler \cite{ACK} and the MOCKA compiler \cite{MOCKA}. Requiring a
+factor after a unary minus forces the use of parentheses whenever there is
+more than one factor to follow which makes programmer intent explicit.
 
 \subsubsection{Backwards compatibility}
 
@@ -599,9 +606,9 @@ Pervasive functions \verb|FLOAT()| and \verb|TRUNC()| should be
 
 \subsubsection{Rationale}
 
-\cite{Wirth88} specifies pevasive conversion function \verb|VAL()| that covers
-all possible use cases for conversion between whole number types. There is no
-reason why \verb|VAL()| could not also cover all possible use cases for
+\cite[p.150]{Wirth88} specifies pevasive conversion function \verb|VAL()| that
+covers all possible use cases for conversion between whole number types. There
+is no reason why \verb|VAL()| could not also cover all possible use cases for
 conversions between whole and real number types.
 
 The presence of alternative functions violates SSP [\ref{SSP}]. The same
@@ -631,7 +638,9 @@ conversion.
 \subsubsection{Substitution}
 
 Function \verb|VAL()| should be extended to provide conversions between whole
-and real number types.
+and real number types. Any invocations of functions \verb|FLOAT()| and
+\verb|TRUNC()| within existing source code may then be safely replaced
+with invocations of \verb|VAL()|.
 
 \subsubsection{Backwards compatibility}
 
@@ -661,8 +670,8 @@ Variables defined in definition parts should be exported \emph{read-only}.
 \subsubsection{Rationale}
 
 Allowing a client module to write to imported variables violates POIH
-[\ref{POIH}] \cite{Parnas72}. \cite{Wirth88} recommends that imported
-variables should be treated ``read-only''.
+[\ref{POIH}] \cite{Parnas72}. And indeed, \cite[p.88]{Wirth88} states
+that ``imported variables should be treated as `read-only' objects''.
 
 \subsubsection{Substitution}
 
@@ -681,12 +690,12 @@ END Foo.
 
 \subsubsection{Backwards compatibility}
 
-Considering that \cite{Wirth88} explicitly recommends to treat imported
-variables ``read-only", none should have written any code that treats them
-as mutable. Unfortunately, there will be code written by careless programmers
-who didn't follow his advice. The careful maintainer may therefore provide a
-compiler switch to enable and disable write-access to imported variables,
-which should then be disabled by default.
+Considering that Wirth explicitly stated to treat imported variables as
+``read-only" objects, noone should have written any code that treats them
+as mutable objects. Unfortunately, there will be code written by careless
+programmers who didn't follow his advice. The careful maintainer may therefore
+consider providing a compiler switch to enable and disable write-access to
+imported variables, which should then be disabled by default.
 
 
 % *****************************************************************************
@@ -717,10 +726,10 @@ Any facility that bypasses the type safety provided by the language should be
 disabled by default.
 
 \subsubsection{Unsafe Facilities provided by SYSTEM}
-\cite{Wirth88} defines pseudo-module \verb|SYSTEM| as a container for unsafe
-facilities. The facilities provided therein are only enabled by import. This
-is desirable as it sensitises programmers to the fact that the facilities are
-unsafe and thereby discourages their use.
+\cite[p.121]{Wirth88} defines pseudo-module \verb|SYSTEM| as a container for
+unsafe facilities. The facilities provided therein are only enabled by import.
+This is desirable as it sensitises programmers to the fact that the facilities
+are unsafe and thereby discourages their use.
  
 \subsubsection{Unsafe Facilities NOT provided by SYSTEM}
 Unfortunately, not all unsafe facilities are provided through pseudo-module
@@ -728,8 +737,10 @@ Unfortunately, not all unsafe facilities are provided through pseudo-module
 enabled by default without import:
 
 \begin{enumerate}[itemindent=-0.75em]
-\item Unsafe type transfers, also known as \emph{type casts}
-\item Records with variant parts, also known as \emph{variant records}
+\item Unsafe type transfers \cite[p.119]{Wirth88}, also known as
+\emph{type casts}
+\item Records with variant parts \cite[p.71, p.138]{Wirth88}, also known as
+\emph{variant records}
 \end{enumerate}
 
 \par\noindent This is a violation of SPP [\ref{SSP}] and given its implications
@@ -779,9 +790,9 @@ TYPE BYTE = WORD;
 
 \subsubsection{Rationale}
 
-\cite{Wirth88} specifies \verb|SYSTEM.WORD| as the smallest addressable
+\cite[p.153]{Wirth88} specifies \verb|SYSTEM.WORD| as the smallest addressable
 unit\footnote{When the first report on Modula-2 was written it was still common
-to call the smallest addressable storage unit \emph{a word}. Since then the
+to call the smallest addressable storage unit a \emph{word}. Since then the
 terminology has changed and it has become common to use the term \emph{byte}
 instead.}. Whilst the report permits provision of \emph{additional} facilities
 in \verb|SYSTEM|, it does not permit \emph{alterations} of \verb|SYSTEM|
@@ -803,7 +814,8 @@ An implementation that provides a means to interface to \glspl{foreign API},
 should also allow the use of \glspl{foreign identifier}. Such an identifier may
 contain one or more dollar \verb|$| and/or lowline \verb|_| characters. Support
 of \glspl{foreign identifier} should be disabled by default and enabled by
-compiler switch when needed.
+compiler switch when needed. For other purposes the use of such a facility
+should be discouraged.
 
 To avoid any collission with name mangled symbols generated by the Modula-2
 compiler, no consecutive and no trailing dollar signs should be permitted; no
@@ -813,13 +825,11 @@ dollar signs and lowlines should not be permitted within module identifiers.
 \subsubsection{Rationale}
 
 Operating system \Glspl{API} and other \glspl{foreign API} often include
-variables and procedures with identifiers that include dollar (predominantly
-on the VMS operating system) and lowline (predominantly on Unix systems and
-C \glspl{API} in general).
+variables and procedures with identifiers that include dollar \verb|$|
+(predominantly on the VMS operating system) and lowline \verb|_|
+(predominantly on Unix systems and C \glspl{API} in general).
 
-Some Modula-2 implementations already support the use of special characters in
-identifiers for this purpose. For any other purposes the use of such a facility
-should be discouraged.
+%\footnote{Some Modula-2 implementations already support the use of special characters in identifiers for this purpose.}.
 
 
 % *****************************************************************************
@@ -905,7 +915,7 @@ list. This was unnecessary duplication since the purpose of a definition
 module is to export all its contents. 
 
 
-%\newpage
+\newpage
 
 % *****************************************************************************
 % D  e  f  i  n  i  t  i  o  n  s
