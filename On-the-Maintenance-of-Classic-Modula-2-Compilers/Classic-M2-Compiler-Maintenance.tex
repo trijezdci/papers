@@ -178,12 +178,14 @@ literature with minimal effort.
 \subsection{Design Principles}
 \label{design-principles}
 
-The following design principles strongly informed the recommendations in this paper:
+The following design principles strongly informed the recommendations in this
+paper:
 
 \subsubsection{Single Syntax Principle (SSP)}
 \label{SSP}
 
-There should be one and \emph{only one} syntax form to express any given concept \cite{Dijkstra78}.
+There should be one and \emph{only one} syntax form to express any given
+concept \cite{Dijkstra78}.
 
 \subsubsection{Literate Syntax Principle (LSP)}
 \label{LSP}
@@ -220,9 +222,10 @@ be denied \cite{Parnas72}.
 \label{SPP}
 
 Facilities that undermine the safety otherwise safeguarded within the language
-should be segregated from other facilities \cite[chapter~29]{Wirth88}. Their use should require an
-explicit expression of intent by the author and be syntactically recognisable
-so as to alert the author, maintainer and reader of the possible implications.
+should be segregated from other facilities \cite[chapter~29]{Wirth88}. Their
+use should require an explicit expression of intent by the author and be
+syntactically recognisable so as to alert the author, maintainer and reader
+of the possible implications.
 
 
 % *****************************************************************************
@@ -251,14 +254,16 @@ depends on the following factors:
 \begin{enumerate}[itemindent=-0.75em]
 \item the severity of the \gls{offending facility}
 \item the estimated frequency of use of the \gls{offending facility}
-\item the effort to update sources impacted by change or removal of the \gls{offending facility}
+\item the effort to update sources impacted by change or removal of the
+\gls{offending facility}
 \end{enumerate}
 
 \noindent The greater the severity of an \gls{offending facility}, the stronger
 is the case for \emph{change} or \emph{removal}; the lower the estimated
 frequency of use and the less the effort to update impacted sources, the
 stronger the case for \emph{change} or \emph{removal}. In the event that
-the estimated frequency of use is high and the effort to update impacted sources is significant, \emph{deprecation} is recommended.
+the estimated frequency of use is high and the effort to update impacted
+sources is significant, \emph{deprecation} is recommended.
 
 
 % *****************************************************************************
@@ -432,7 +437,8 @@ minimal effort using regular expressions and a filter program such as
 % *****************************************************************************
 \subsection{Multi-Dimensional Arrays}
 
-Inconsistent definition or declaration of multi-dimensional arrays should trigger \emph{warnings}.
+Inconsistent definition or declaration of multi-dimensional arrays should
+trigger \emph{warnings}.
 
 \subsubsection{Rationale}
 
@@ -831,7 +837,8 @@ as a \gls{foreign definition module}.
 implementors have invented their own syntax to mark a definition module as
 foreign, and this varies between implementations.
 
-However, the corresponding implementation could in principle be done in Modula-2. The marking of a definition module as foreign does not alter its
+However, the corresponding implementation could in principle be done in
+Modula-2. The marking of a definition module as foreign does not alter its
 semantics. Consequently, any such marking constitutes de-facto a
 \gls{non-semantic compiler directive}.
 
