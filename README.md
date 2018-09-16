@@ -1,3 +1,3 @@
 # Papers
 
-Papers by B.Kowarsch
+Source repository for papers by B.Kowarsch
