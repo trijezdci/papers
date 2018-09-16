@@ -239,8 +239,8 @@ The primary objectives for the recommendations in this paper are:
 
 \renewcommand{\labelenumi}{(\arabic{enumi})}
 \begin{enumerate}[leftmargin=!, labelindent=-0.75em, itemindent=0em]
-\item to remove facilities that are harmful, outdated or violate design
-principles
+\item to remove facilities that are harmful, outdated or violate
+any of [\ref{design-principles}]
 \item to resolve ambiguities in \cite{Wirth88} and incompatibilities between
 implementations
 \item to maintain the capability to compile programming examples in the
@@ -301,7 +301,7 @@ is therefore generally preferable to warning or deprecation.
 
 \subsubsection{Transformation}
 
-To be used in commbination with any of change, deprecation or removal.
+To be used in combination with any of change, deprecation or removal.
 A conversion program should be provided that transforms source code that uses
 \glspl{offending facility} into semantically equivalent source code that
 complies with the recommendations given in this paper.
