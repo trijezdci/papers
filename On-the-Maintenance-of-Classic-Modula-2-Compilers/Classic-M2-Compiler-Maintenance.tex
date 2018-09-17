@@ -143,7 +143,7 @@
 % *****************************************************************************
 \title{On the Maintenance of Classic Modula-2 Compilers}
 \author{\BK, Modula-2 Software Foundation}
-\date{\small{September 2018 (Draft 6)}}
+\date{\small{September 2018 (Final Draft)}}
 \makeatletter
 \let\Title\@title
 \makeatother
@@ -198,7 +198,7 @@ concept \cite{Dijkstra78}.
 \subsubsection{Literate Syntax Principle (LSP)}
 \label{LSP}
 
-Syntax should be chosen to aid readability and comprehensibility by a human
+Syntax should be chosen for readability and comprehensibility by a human
 reader \cite{Knuth84}.
 
 \subsubsection{Consistency of Syntax Principle (COSP)}
@@ -210,15 +210,15 @@ analogous syntax.
 \subsubsection{Principle of Least Astonishment (POLA)}
 \label{POLA}
 
-Of any number of alternative syntax forms or semantics, the one likely to cause
+Of any number of possible syntax forms or semantics, the one likely to cause
 the least astonishment for a human reader should be chosen and the alternatives
 should be discarded \cite{Geoffrey87}.
 
 \subsubsection{Single Responsibility Principle (SRP)}
 \label{SRP}
 
-Units of decomposition, such as modules, procedures and functions should have
-a single focus and purpose \cite{Martin09}.
+Units of decomposition, such as modules, classes, procedures and functions
+should have a single focus and purpose \cite{Martin09}.
 
 \subsubsection{Principle of Information Hiding (POIH)}
 \label{POIH}
@@ -233,7 +233,8 @@ Facilities that undermine the safety otherwise safeguarded within the language
 should be segregated from other facilities \cite[ch.29]{Wirth88}. Their
 use should require an explicit expression of intent by the author and be
 syntactically recognisable so as to alert the author, maintainer and reader
-of the possible implications.
+of the possible implications. This applies and extends the principle of least
+privilege \cite{Saltzer74}.
 
 
 % *****************************************************************************
@@ -329,7 +330,7 @@ The use of octal numbers has long been outdated. Further, the \verb|B| and
 hexadecimal literals, which is confusing to human readers of the source code as
 it violates POLA [\ref{POLA}] and it unnecessarily complicates lexing.
 
-\subsubsection{Substitute}
+\subsubsection{Substitution}
 
 The built-in \verb|CHR()| function can be used instead without penalty as it is
 evaluated at compile time for constant arguments. The function accepts decimal
@@ -337,7 +338,7 @@ and hexadecimal arguments. Code that uses the \verb|CHR()| function instead of
 octal literals can always be compiled on any classic Modula-2 compiler,
 regardless of whether octal literals are recognised or not.
 
-\subsubsection{Backwards compatibility}
+\subsubsection{Backwards Compatibility}
 
 Preferably, \emph{transformation} should be used to replace all occurences of
 octal literals in existing Modula-2 sources. Alternatively, octal literals
@@ -366,12 +367,12 @@ there are synonyms for \verb|AND| and \verb|NOT|, there is none for \verb|OR|.
 Although \verb!|! could have been used to denote \verb|OR|, it is already used
 to separate case labels and would have caused ambiguity.
 
-\subsubsection{Substitute}
+\subsubsection{Substitution}
 
 Symbol \verb|#| can be used in place of \verb|<>|, while \verb|AND| can be used
 in place of \verb|&| and \verb|NOT| in place of \url{~}.
 
-\subsubsection{Backwards compatibility}
+\subsubsection{Backwards Compatibility}
 
 Preferably, \emph{transformation} should be used to replace all occurences of
 synonym symbols in existing Modula-2 sources. Alternatively, synonym symbols
@@ -398,12 +399,12 @@ today do not follow the convention, for example the venerable MOCKA compiler
 
 As a result, source code with \glspl{compiler directive} is often not portable
 across different implementations. This is unfortunate, because non-semantic
-directives can safely be ignored in the event that they are not supported. An
-implementation may choose to issue warnings about unrecognised directives, but
-in order to be able to identify a directive as such in the first place, a
-common delimiter convention needs to be followed across implementations.
+directives can safely be ignored in the event that they are not supported.
+Even where an implementation issues warnings about unrecognised directives,
+to be able to identify a directive as such in the first place, a common
+delimiter convention needs to be followed across implementations.
 
-\subsubsection{Backwards compatibility}
+\subsubsection{Backwards Compatibility}
 
 Non-compliant directives within existing source code should be replaceable with
 minimal effort using regular expressions and a filter program such as
@@ -427,7 +428,7 @@ Consequently, an implementation needs to be able to distinguish between
 semantic and non-semantic directives. In order to do so, different delimiters
 must be used.
 
-\subsubsection{Substitute}
+\subsubsection{Substitution}
 
 Some Modula-2 compilers have used a \verb|%|
 prefix to denote \glspl{compiler directive}, in particular for conditional
@@ -436,7 +437,7 @@ follow that convention to denote \glspl{non-semantic compiler directive}
 if any are provided. The \verb|%|
 symbol is not otherwise used in the language.
 
-\subsubsection{Backwards compatibility}
+\subsubsection{Backwards Compatibility}
 
 Non-compliant directives within existing source code should be replaceable with
 minimal effort using regular expressions and a filter program such as
@@ -478,7 +479,7 @@ multi-dimensional arrays would likely be high. It is less effort and
 sufficient to modify an implementation to detect and warn about mixed use
 in any given compilation unit.
 
-\subsubsection{Backwards compatibility}
+\subsubsection{Backwards Compatibility}
 
 The proposed mitigation does not impact the compatibility of legacy sources.
 
@@ -511,7 +512,7 @@ number of lexically independent test environments.
 Local modules should be removed from their enclosing module and provided as
 proper library modules with their own definition and implementation parts.
 
-\subsubsection{Backwards compatibility}
+\subsubsection{Backwards Compatibility}
 
 Backwards compatibility can be provided via compiler switch.
 
@@ -592,7 +593,7 @@ ACK compiler \cite{ACK} and the MOCKA compiler \cite{MOCKA}. Requiring a
 factor after a unary minus forces the use of parentheses whenever there is
 more than one factor to follow which makes programmer intent explicit.
 
-\subsubsection{Backwards compatibility}
+\subsubsection{Backwards Compatibility}
 
 Unary minus is an infrequently used operation. When it is used, it is usually
 in a form that is compliant with the syntax proposed in this paper. In the
@@ -650,7 +651,7 @@ Once function \verb|VAL()| has been extended to provide type conversion
 between whole and real number types, any invocation of functions \verb|FLOAT()| and \verb|TRUNC()| within existing source code may be safely
 replaced with an invocation of \verb|VAL()|.
 
-\subsubsection{Backwards compatibility}
+\subsubsection{Backwards Compatibility}
 
 Backwards compatibility can be provided via compiler switch.
 
@@ -678,8 +679,8 @@ Variables defined in definition parts should be exported \emph{read-only}.
 \subsubsection{Rationale}
 
 Allowing a client module to write to imported variables violates POIH
-[\ref{POIH}] \cite{Parnas72}. And indeed, \cite[p.88]{Wirth88} states
-that ``imported variables should be treated as `read-only' objects''.
+[\ref{POIH}]. And indeed, \cite[p.88]{Wirth88} explicitly states that
+``imported variables should be treated as `read-only' objects''.
 
 \subsubsection{Substitution}
 
@@ -696,7 +697,7 @@ PROCEDURE SetBar ( value : Bar );
 END Foo.
 \end{lstlisting}
 
-\subsubsection{Backwards compatibility}
+\subsubsection{Backwards Compatibility}
 
 Considering that Wirth explicitly stated to treat imported variables as
 ``read-only" objects, noone should have written any code that treats them
@@ -720,7 +721,7 @@ safety. Opaque pointer types are the primary instrument through which the
 former is achieved. The ability to test whether an opaque pointer type has
 been allocated or deallocated is central to achieving the latter.
 
-\subsubsection{Backwards compatibility}
+\subsubsection{Backwards Compatibility}
 
 The proposed mitigation does not impact the compatibility of legacy sources.
 
@@ -858,9 +859,9 @@ Modula-2. The marking of a definition module as foreign does not alter its
 semantics. Consequently, any such marking constitutes de-facto a
 \gls{non-semantic compiler directive}.
 
-\subsubsection{Recommendation}
+\subsubsection{Proposed Syntax}
 
-The directive should be placed after the module header, its recommended syntax
+The directive should be placed after the module header, its proposed syntax
 is as follows:
 
 \begin{verbatim}
