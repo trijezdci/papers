@@ -106,6 +106,11 @@
   description={A directive within the source to instruct a language processor
   how to process the input}
 }
+\newglossaryentry{ETH}{
+  name={ETH},
+  description={Eidgen\"{o}ssisch Technische Hochschule
+  -- Swiss Federal Institute of Technology}
+}
 \newglossaryentry{foreign identifier}{
   name=foreign identifier,
   description={An identifier of a foreign API}
@@ -138,7 +143,7 @@
 % *****************************************************************************
 \title{On the Maintenance of Classic Modula-2 Compilers}
 \author{\BK, Modula-2 Software Foundation}
-\date{September 2018 (Draft 5)}
+\date{\small{September 2018 (Draft 6)}}
 \makeatletter
 \let\Title\@title
 \makeatother
@@ -155,20 +160,21 @@
 % A  b  s  t  r  a  c  t
 % *****************************************************************************
 \begin{abstract}
-The classical Modula-2 language was specified in \cite{Wirth78} by Niklaus
-Wirth at ETH Z\"{u}rich in 1978. The last revision \cite{Wirth88} was
-published in 1988. Many computer science books of that era used Modula-2 for
-their programming examples. Many of these are still valuable educational
-resources in computer science education today. In order to compile and run the
-examples therein, it is essential to have compilers available that follow the
-classical Modula-2 language definition and run on modern computer hardware and
-operating systems. While most Modula-2 compilers of that era have disappeared,
-a few have since been re-released under open source licenses. Although the
-original authors have long ceased work on these compilers, new maintainers
-have stepped in. This paper gives recommendations for maintenance work on such
-compilers in a manner that balances the aim to modernise with the need to
-retain the capability of compiling historic programming examples in the
-literature with minimal effort.
+The classic Modula-2 language was specified in \cite{Wirth78} by N.Wirth at
+\Gls{ETH} Z\"{u}rich in 1978. The last revision \cite{Wirth88} was published in
+1988. Many computer science books of that era used Modula-2 in programming
+examples. Many of these are still valuable resources in computer science
+education today. To compile and run the examples therein, it is essential to
+have compilers available that follow the classic Modula-2 language definition
+and run on modern computer hardware and operating systems. Although most
+Modula-2 compilers of that era have disappeared, a few have since been
+re-released under open source licenses. Whilst the original authors have long
+ceased work on these compilers, new maintainers have stepped in. This paper
+gives recommendations for maintenance on classic Modula-2 compilers while
+balancing the aim to modernise with the need to maintain the capability to
+compile programming examples in the literature with minimal effort. 
+Nevertheless, the principles, methods and conclusions presented are adaptable
+to maintenance on other languages.
 \end{abstract}
 
 
@@ -224,7 +230,7 @@ be denied \cite{Parnas72}.
 \label{SPP}
 
 Facilities that undermine the safety otherwise safeguarded within the language
-should be segregated from other facilities \cite[ch.~29]{Wirth88}. Their
+should be segregated from other facilities \cite[ch.29]{Wirth88}. Their
 use should require an explicit expression of intent by the author and be
 syntactically recognisable so as to alert the author, maintainer and reader
 of the possible implications.
@@ -321,7 +327,7 @@ Support for octal literals should be \emph{removed}.
 The use of octal numbers has long been outdated. Further, the \verb|B| and
 \verb|C| suffixes used to denote octal literals are also legal digits within
 hexadecimal literals, which is confusing to human readers of the source code as
-it violates POLA [\ref{POLA}] and unnecessarily complicates lexing.
+it violates POLA [\ref{POLA}] and it unnecessarily complicates lexing.
 
 \subsubsection{Substitute}
 
@@ -469,8 +475,8 @@ the more preferable the abbreviated form becomes. However, it is more effort
 to \emph{remove} or \emph{deprecate} the long form. The impact of
 \emph{removal} or \emph{deprecation} on existing sources with
 multi-dimensional arrays would likely be high. It is less effort and
-sufficient to modify an implementation to detect and warn about mixing
-both forms in any given compilation unit.
+sufficient to modify an implementation to detect and warn about mixed use
+in any given compilation unit.
 
 \subsubsection{Backwards compatibility}
 
@@ -605,29 +611,28 @@ minimal effort.
 % *****************************************************************************
 \subsection{Conversion}
 
-Pervasive functions \verb|FLOAT()| and \verb|TRUNC()| should be
-\emph{deprecated}.
+Pervasive function \verb|VAL()| should be \emph{changed}
+to cover all numeric conversions and numeric conversions only.
+Pervasive functions \verb|FLOAT()| and \verb|TRUNC()| should then be
+\emph{deprecated}. Any additional non-standard conversion functions such as
+\verb|INT()|, \verb|CARD()| and \verb|LFLOAT()| should be \emph{removed}.
 
 \subsubsection{Rationale}
 
-\cite[p.150]{Wirth88} specifies pevasive conversion function \verb|VAL()| that
-covers all possible use cases for conversion between whole number types. There
-is no reason why \verb|VAL()| could not also cover all possible use cases for
-conversions between whole and real number types.
-
-The presence of alternative functions violates SSP [\ref{SSP}]. The same
-applies to any additional conversion functions such as \verb|INT()|,
-\verb|CARD()| and \verb|LFLOAT()|\footnote{By contrast, \texttt{CHR()} and
-\texttt{ORD()} are not conversion functions. \texttt{CHR()} performs a
-lookup while \texttt{ORD()} returns a property. Their availability
-does not violate SRP and they should not be considered for removal
-or deprecation.} provided by some implementations.
+\cite[p.150]{Wirth88} specifies pevasive conversion function \verb|VAL()|
+which covers all possible use cases for safe type conversion between whole
+number types. There is no reason why \verb|VAL()| could not also cover all
+possible use cases for conversions between whole and real number
+types. By contrast, \texttt{CHR()} and \texttt{ORD()} are not
+conversion functions\footnote{\texttt{CHR()} performs a lookup while
+\texttt{ORD()} returns a property.} and they should not be duplicated by
+\verb|VAL()|. Duplication violates SSP [\ref{SSP}].
  
 Furthermore, function \verb|FLOAT()| is confusingly named since the type it
 converts to is \verb|REAL| and there is no type \verb|FLOAT|. \cite{Wirth88}
 does not specify how real number types are to be implemented. They need not be
 implemented as floating point numbers but could be implemented as binary coded
-decimals, for instance. The naming of function \verb|FLOAT()| is therefore
+decimals, for instance. The naming of \verb|FLOAT()| is thus
 misleading and violates COSP [\ref{COSP}] and POLA [\ref{POLA}].
 
 Finally, function \verb|TRUNC()| violates SRP [\ref{SRP}] as it represents
@@ -641,10 +646,9 @@ conversion.
 
 \subsubsection{Substitution}
 
-Function \verb|VAL()| should be extended to provide conversions between whole
-and real number types. Any invocations of functions \verb|FLOAT()| and
-\verb|TRUNC()| within existing source code may then be safely replaced
-with invocations of \verb|VAL()|.
+Once function \verb|VAL()| has been extended to provide type conversion
+between whole and real number types, any invocation of functions \verb|FLOAT()| and \verb|TRUNC()| within existing source code may be safely
+replaced with an invocation of \verb|VAL()|.
 
 \subsubsection{Backwards compatibility}
 
@@ -652,14 +656,14 @@ Backwards compatibility can be provided via compiler switch.
 
 \subsubsection{Implementation}
 It should be noted that function \verb|VAL()| is not generally implemented as a
-single function, nor should it be. Instead, it is usually and should be
+single function, nor should it be. Instead, it is usually and preferably
 implemented as a built-in macro, resolved at compile time to a function
 internal to the compiler that is specific to the source and target types of its
-arguments, since the types are known at compile time. It thereby simplifies the
-user interface without incurring the penalty of increasing the complexity of
-its implementation. The specific conversion functions need to be within the
-compiler anyway, but they should not be individually exposed in the user
-interface.
+arguments, since the types are known at compile time. \verb|VAL()| thereby
+simplifies the user interface without incurring the penalty of increasing the
+complexity of its implementation. The specific conversion functions need to be
+implemented within the compiler anyway, but they should not be individually
+exposed in the user interface.
 
 
 \section{Semantics}
@@ -889,7 +893,7 @@ suffixes \verb|def| and \verb|mod|.
 
 Neither \cite{Wirth78} nor \cite{Wirth88} mention filename suffixes for
 Modula-2 source files. A de-facto standard has been established by the
-compilers distributed by ETH Z\"{u}rich: Suffix \verb|def| is used for
+compilers distributed by \Gls{ETH} Z\"{u}rich: Suffix \verb|def| is used for
 definition module files and suffix \verb|mod| for implementation and program
 module files.
 
